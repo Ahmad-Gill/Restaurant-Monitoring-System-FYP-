@@ -1,4 +1,64 @@
 body {
     font-family: Arial, sans-serif;
-    font-size: 16px !important; /* Use !important if necessary */
+    font-size: 16px !important; 
+    background-image: url('../images/bg.jpg'); 
+    background-size: cover;       
+    background-position: center;  
+    background-repeat: no-repeat;  
+    background-attachment: fixed; 
+    height: 100vh;                
+    margin: 0;         
+}   
+/* used to add a black shade over image  */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);/* 0.9 is the intensity to black the image*/
+    z-index: -1; 
+}   
+
+header {
+    text-align: center;        
+    padding-top: 50px;           /* Adds padding from the top */
+}
+
+header h1 {
+    font-size: 80px;  
+    font-weight: bold;           
+    color: white;               
+    margin: 0;                 
+}
+
+section {
+    color: #fff;                      
+    padding: 40px 20px;              
+    margin: 20px auto;                             
+    max-width: 800px;                   
+    text-align: center;                
+}
+
+section h2 {
+    font-size: 30px;                 
+    margin-bottom: 20px;               
+    font-weight: bold;                 }
+
+section p {
+    font-size: 15px;                  
+    margin: 0;                        
+    line-height: 1.6;                  
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: transparent !important;
+    color: white; 
+    text-align: center;
+    padding: 10px 0;
+    font-size: 20px;
 }
