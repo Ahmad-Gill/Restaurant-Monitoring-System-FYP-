@@ -1,15 +1,21 @@
+html, body {
+    height: 100%;
+    margin: 0; 
+}
 body {
     font-family: Arial, sans-serif;
-    font-size: 16px !important; 
-    background-image: url('../images/bg.jpg'); 
-    background-size: cover;       
-    background-position: center;  
-    background-repeat: no-repeat;  
-    background-attachment: fixed; 
-    height: 100vh;                
-    margin: 0;         
-}   
-/* used to add a black shade over image  */
+    font-size: 16px !important;
+    background-image: url('../images/bg.jpg'); /* Main background image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh; 
+    position: relative; 
+}
+/* Black overlay over the body */
 body::before {
     content: '';
     position: absolute;
@@ -17,48 +23,44 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);/* 0.9 is the intensity to black the image*/
-    z-index: -1; 
-}   
-
-header {
-    text-align: center;        
-    padding-top: 50px;           /* Adds padding from the top */
+    background-color: rgba(0, 0, 0, 0.8); /* Intensity to black the image */
+    z-index: 1; /* Positioned above the background image but below the content */
 }
-
-header h1 {
-    font-size: 80px;  
-    font-weight: bold;           
-    color: white;               
-    margin: 0;                 
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; 
 }
-
-section {
-    color: #fff;                      
-    padding: 40px 20px;              
-    margin: 20px auto;                             
-    max-width: 800px;                   
-    text-align: center;                
+.navbar {
+    z-index: 2; 
 }
-
-section h2 {
-    font-size: 30px;                 
-    margin-bottom: 20px;               
-    font-weight: bold;                 }
-
-section p {
-    font-size: 15px;                  
-    margin: 0;                        
-    line-height: 1.6;                  
+.logo {
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    z-index: 1; 
 }
-
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: transparent !important;
-    color: white; 
+.content {
+    position: relative;
+    z-index: 2;
+    color: white;
     text-align: center;
-    padding: 10px 0;
-    font-size: 20px;
+    padding-top: 50px;
+    flex-grow: 1; 
 }
+.footer {
+ 
+    color: #ffffff; 
+    text-align: center;
+    padding: 10px;
+    margin-top: auto; 
+    position: relative; 
+    z-index: 2; /* Ensures it appears above other elements */
+}
+h1 {
+    font-size: 100px !important; 
+    font-weight: bold; 
+    padding: 20px;
+}
+

@@ -1,4 +1,8 @@
 from django.shortcuts import render
 
 def main(request):
-    return render(request, "HtmlFiles/main.html")
+    context={
+        "count":2,
+        "time":"kahdsl",
+    }
+    return render(request, "HtmlFiles/main.html",context)
