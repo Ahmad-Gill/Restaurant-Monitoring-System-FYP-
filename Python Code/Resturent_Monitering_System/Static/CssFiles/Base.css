@@ -1,5 +1,6 @@
 html, body {
     height: 100%;
+    overflow: hidden; /* Disable vertical and horizontal scrolling */
     margin: 0; 
 }
 body {
@@ -35,12 +36,27 @@ body::before {
     z-index: 2; 
 }
 .logo {
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    z-index: 1; 
+    position: absolute; /* Allows positioning relative to the nearest positioned ancestor (the body) */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center the logo */
+    z-index: 0; /* Behind other content */
 }
+
+.rotate {
+    animation: spin 2s linear infinite; /* Continuous spinning animation */
+    /* Remove transform here */
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg); /* Start rotation */
+    }
+    to {
+        transform: rotate(360deg); /* Full rotation */
+    }
+}
+
 .content {
     position: relative;
     z-index: 2;
@@ -63,4 +79,9 @@ h1 {
     font-weight: bold; 
     padding: 20px;
 }
+
+
+
+
+
 

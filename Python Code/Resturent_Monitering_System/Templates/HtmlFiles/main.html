@@ -1,28 +1,36 @@
 {% extends "HtmlFiles/Base.html" %}
-{% block title %}Main PAge{% endblock title %}
+{% block title %}Main Page{% endblock title %}
 
 {% load static %}
 
 {% block home_active %}active{% endblock home_active %}
 
-
 {% block body %}
 
+<!-- Include slider.css for styling the slider -->
+<link href="{% static 'CssFiles/main.css' %}" rel="stylesheet">
+<script src="{% static 'JavaScriptFiles/main.js' %}"></script>
+
+<header>
+    <h1 id="headline1">Innovative Monitoring Awaits</h1>
+</header>
+
+<main>
+    <section>
+        <h2 id="headline2">Optimize Your Operations with Precision Monitoring</h2>
+        <p id="description">Our system delivers real-time insights to streamline your restaurant’s efficiency.</p>
+    </section>
+</main>
 
 
-    <header>
-        <h1>Innovative Monitoring Awaits</h1>
-    </header>
-
-    <main>
-        <section>
-            <h2>Optimize Your Operations with Precision Monitoring</h2>
-            <p>Our system delivers real-time insights to streamline your restaurant’s efficiency.</p>
-            
-
-        </section>
-    </main>
+        <!-- Slider bar -->
+        <div class="slider-container">
+            <div class="slider-track">
+                <div class="slider-fill" id="sliderFill"></div>
+                <div id="sliderThumb" class="slider-thumb">Start</div>
+            </div>
+           
+        </div>
 
 
-
-    {% endblock %}
+{% endblock %}

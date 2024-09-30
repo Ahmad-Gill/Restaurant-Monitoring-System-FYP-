@@ -9,6 +9,7 @@
 </head>
 <body>
     <div class="wrapper" style="position: relative; min-height: 100vh;">
+    {% comment %} --------------------Nave BAR -------------------- {% endcomment %}
         <nav class="navbar navbar-expand-lg" style=" color: #ffffff; font-weight: bold; position: relative; z-index: 2;">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/" style="color: #ffffff; font-weight: bold;">
@@ -23,8 +24,9 @@
                             <a class="nav-link" href="/" style="color: #ffffff; font-weight: bold;">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if user.username != 'Ahmad' %}disabled{% endif %}" href="/admin" style="color: #ffffff; font-weight: bold;">Admin</a>
+                            <a class="nav-link {% if user.username != 'Ahmad' %}disabled{% endif %}" href="{% url 'admin:index' %}">Admin</a>
                         </li>
+                        
                     </ul>
                 </div>
             </div>
@@ -32,7 +34,7 @@
         
         <!-- Logo behind the content -->
         <div class="logo">
-            <img src="{% static 'images/bg_logo.png' %}" alt="logo">
+            <img src="{% static 'images/bg_logo.png' %}" alt="logo" id="rotatingLogo">
         </div>
 
         <!-- Content from child templates -->
@@ -40,7 +42,7 @@
             {% block body %}
             {% endblock %}
         </div>
-
+<!--Footer -->
         <footer class="footer" style="color: #ffffff; z-index: 2; position: relative;">
             <div class="container">
                 <p>&copy; 2024 Restaurant Monitoring System. All rights reserved.</p>
