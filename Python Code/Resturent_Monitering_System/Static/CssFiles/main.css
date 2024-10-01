@@ -1,8 +1,10 @@
+@import url('CssFiles/variables.css');
+
 
 /*------------------------------------------ Slider Section -------------------------------*/
 .slider-container {
     position: fixed; 
-    bottom: 150px; /* Position above the footer, adjust as needed */
+    bottom: 150px; 
     left: 50%;
     transform: translateX(-50%); 
     width: 80%; 
@@ -10,8 +12,8 @@
     z-index: 1000; 
 }
 .content-section {
-    padding: 20px; /* Add padding around content */
-    margin-bottom: 100px; /* Space for the slider if needed */
+    padding: 20px;
+    margin-bottom: 100px; 
 }
 
 .slider-track {
@@ -26,12 +28,12 @@
 .slider-thumb {
     width: 100px; 
     height: 100%; 
-    background-color: #5B4B8A; /* Plum Nectar */
+    background-color: var(--primary-color); /* Plum Nectar */
     border-radius: 25px; 
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: var(--Headings);
     font-weight: bold;
     cursor: pointer; 
     position: absolute;
@@ -43,7 +45,7 @@
 
 /* Hover Effect */
 .slider-thumb:hover {
-    background-color: #4A3A6A; 
+    background-color: var(--hover); 
     transform: scale(1.05); 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
 }
@@ -53,13 +55,13 @@
     bottom: 60px; 
     left: 50%;
     transform: translateX(-50%);
-    color: #fff; 
+    color:var(--headings); 
     font-size: 24px; 
     text-align: center;
 }
 .slider-fill {
     height: 100%;
-    background-color: #5B4B8A; 
+    background-color:var(--primary-color); 
     border-radius: 25px;
     position: absolute;
     left: 0;
@@ -77,16 +79,16 @@
 
  /*------------------------------------------ USe Gradient Effect -------------------------------*/
 h1 {
-    font-size: 70px !important; 
-    background: linear-gradient(45deg, #ffffff, #c0c0c0, #e0e0e0, #ffffff); 
+    font-size: var(--font-size-large-h1) !important; 
+    background: var(--danger-color); 
     background-clip: text; 
-    -webkit-background-clip: text; 
     color: transparent; 
     text-shadow: 
         1px 1px 2px rgba(255, 255, 255, 0.8), 
         -1px -1px 2px rgba(160, 160, 160, 0.7);
     display: inline-block; 
 }
+
 
 
 
