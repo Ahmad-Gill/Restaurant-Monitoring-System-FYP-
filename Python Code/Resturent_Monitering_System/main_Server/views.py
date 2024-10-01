@@ -1,5 +1,11 @@
-from django.shortcuts import render
-
+from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate, login as auth_login,logout
+from django.contrib import messages
+from django.urls import reverse
+from .models import GeneratedValue  # Adjust based on your project structure
+from django.http import JsonResponse
+from .models import GeneratedValue
+from python_code.generate_random_value import generate_random_value
 
 
 # main page
@@ -12,4 +18,31 @@ def main(request):
 
 # Categories Section
 def categories(request):
+    if request.user.is_anonymous:
+        return redirect("/login")
     return render(request, 'HtmlFiles/categories.html')
+
+# Login / logout
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('name')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user) 
+            messages.success(request, f"You logged in as {username}")
+            return redirect('categories')  # Redirecting to categories
+        else:
+            messages.error(request, "Incorrect Username or password")
+    
+    return render(request, 'HtmlFiles/login.html')
+def logoutUser(request):
+    logout(request)
+    return redirect(reverse('main')) 
+
+# Sample Gineratio py function
+def generate_value_view(request):
+    generated_value = generate_random_value()  # Call your function to generate a random value
+    return render(request, 'your_template.html', {'generated_value': generated_value})  # Replace 'your_template.html' with your actual template name

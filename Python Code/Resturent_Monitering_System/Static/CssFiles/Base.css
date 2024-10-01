@@ -1,13 +1,15 @@
-@import url('CssFiles/variables.css');
+@import url('../CssFiles/variables.css');
+
 html, body {
     height: 100%;
-    overflow: hidden; /* Disable vertical and horizontal scrolling */
+    overflow: hidden; 
     margin: 0; 
 }
+
 body {
     font-family: Arial, sans-serif;
     font-size: 16px !important;
-    background-image: url('../images/bg.jpg'); /* Main background image */
+    background-image: var(--background-image); /* Main background image */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -17,6 +19,7 @@ body {
     min-height: 100vh; 
     position: relative; 
 }
+
 /* Black overlay over the body */
 body::before {
     content: '';
@@ -25,17 +28,18 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--background); /* Intensity to black the image */
-    z-index: 1; /* Positioned above the background image but below the content */
+    z-index: 1; 
+    background-color: rgba(0, 0, 0, 0.7); /* Black with 50% opacity */
 }
+
 .wrapper {
     display: flex;
     flex-direction: column;
     flex-grow: 1; 
 }
-.navbar {
-    z-index: 2; 
-}
+
+
+/* --------------------LOGO------------------------------------- */
 .logo {
     position: absolute; 
     top: 50%; 
@@ -46,7 +50,6 @@ body::before {
 
 .rotate {
     animation: spin 2s linear infinite; /* Continuous spinning animation */
-    /* Remove transform here */
 }
 
 @keyframes spin {
@@ -58,30 +61,55 @@ body::before {
     }
 }
 
+/*-------------------------NAV BAar------------------------- */
+.navbar {
+    z-index: 2; 
+}
+.navbar .nav-link {
+    text-decoration: none; 
+    color:var(--headings);
+    position: relative;
+}
+
+.navbar .nav-link::after {
+    content: ''; 
+    display: block; 
+    height: 5px; 
+    background-color:var(--primary-color);
+    position: absolute;
+    left: 0; 
+    bottom: -5px; 
+    width: 100%; 
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.navbar .nav-link:hover::after {
+    transform: scaleX(1); 
+}
+
+/* --------------------Container------------------------------------*/
+
 .content {
     position: relative;
     z-index: 2;
-    color:var(--Headings);
+    color: var(--headings, #ffffff); 
     text-align: center;
     padding-top: 50px;
     flex-grow: 1; 
 }
+/* --------------------Footer------------------------------------*/
 .footer {
-
-    color: var(--secondary-color);
+    color: var(--primary-color);
     text-align: center;
     padding: 10px;
     font-size: var(--font-size-small);
 }
 
 h1 {
-    font-size: var(--font-size-large-h)!important; 
+    font-size: var(--font-size-large-h1) !important;
     font-weight: bold; 
     padding: 20px;
 }
-
-
-
-
 
 

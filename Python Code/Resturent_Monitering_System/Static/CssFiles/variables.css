@@ -1,11 +1,13 @@
 :root {
     --primary-color:  #5B4B8A;   /* Buttons */
     --danger-color: #e74c3c;     /* Danger */
-    --Headings: #ffffff;         /* For headings like h1, h2 */
+    --headings: #ffffff;         /* For headings like h1, h2 */
     --hover: #4A3A6A;            /* Hover color */
     --background: rgba(0, 0, 0, 0.8); /* Background color */
 
     --font-size-small: 16px;     /* Small font size */
-    --font-size-medium: 26px;    /* Medium font size */
+    --font-size-medium: 36px;    /* Medium font size */
     --font-size-large-h1: 100px; /* Large font size for h1 */
+
+    --background-image: url('../images/bg.jpg'); /* Background image */
 }

@@ -1,0 +1,89 @@
+@import url('../CssFiles/variables.css');
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-image: var(--background-image); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-signin {
+    width: 400px;
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly translucent white for the form */
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    right: 20px;
+    top: 50%; 
+    transform: translateY(-50%); 
+    z-index: 2; 
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1; /* Positioned below the form */
+}
+
+
+h1 {
+    font-size: var(--font-size-medium);
+    color: var(--background); /* Ensure this variable is defined */
+    text-align: center; 
+    margin: 0; /* Remove default margin */
+    margin-bottom: 30px;
+
+}
+
+
+.form-floating input {
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+.form-floating input:focus {
+    border-color: var(--primary-color);
+    box-shadow: var(--primary-color);
+}
+
+.btn-primary {
+    background-color:var(--primary-color);
+    border-color: var(--hover);
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--hover);
+    box-shadow:var(--hover);
+}
+
+.alert {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.form-floating {
+    margin-bottom: 1rem; 
+}
+.checkbox-container {
+    display: flex; 
+    align-items: center; 
+    margin-top: 10px; 
+}
+input[type="checkbox"] {
+    margin-right: 10px; 
+    cursor: pointer; 
+    transform: translateY(2px);
+    margin-top: 20px; 
+}
+

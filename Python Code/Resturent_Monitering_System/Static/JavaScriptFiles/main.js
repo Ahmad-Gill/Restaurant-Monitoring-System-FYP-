@@ -1,5 +1,5 @@
 
-// Add A slider
+// ------------------------------Add A slider---------------------------------
 
 document.addEventListener('DOMContentLoaded', function () {
     const sliderThumb = document.getElementById('sliderThumb');
@@ -57,8 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
             newPosition = 0;
         } else if (newPosition > maxPosition) {
             newPosition = maxPosition;
-            window.location.href = "/categories/"; // Navigate to the categories page
+   
+            window.location.href = "/login/"; 
         }
+        
 
         sliderThumb.style.left = `${newPosition}px`;
 
@@ -78,12 +80,12 @@ document.addEventListener('DOMContentLoaded', function () {
         isDragging = false;
         sliderThumb.style.left = "0px"; 
         sliderFill.style.width = "0%"; 
-        sliderThumb.textContent = "Start";
+        sliderThumb.textContent = "Login";
         progressDisplay.textContent = "0%"; 
     }
 });
 
-// add seffect on TExt Writing 
+//---------------------------------- add seffect on TExt Writing --------------------------------------
 
 
 function typeEffect(element, text, speed) {
