@@ -1,0 +1,20 @@
+{% extends "HtmlFiles/Base.html" %}
+{% block title %}Analytics{% endblock title %}
+
+{% load static %}
+
+{% block body %}
+
+    <main>
+        <section>
+            <h2>Most Ordered Dishes</h2>
+            <canvas id="most-ordered-dishes-chart"></canvas>
+            <p>{{ count }}</p>
+
+        </section>
+        <section>
+            <h2>Customer Count</h2>
+            <canvas id="customer-count-chart"></canvas>
+        </section>
+    </main>
+{% endblock %}

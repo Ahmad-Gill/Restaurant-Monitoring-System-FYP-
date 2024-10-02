@@ -46,3 +46,28 @@ def logoutUser(request):
 def generate_value_view(request):
     generated_value = generate_random_value()  # Call your function to generate a random value
     return render(request, 'your_template.html', {'generated_value': generated_value})  # Replace 'your_template.html' with your actual template name
+
+def analytics_review(request):
+    context = {
+        "count": 2,
+        "time": "kahdsl",
+    }
+    return render(request, "HtmlFiles/analytics.html", context)
+
+def checks(request):
+    context = {
+        "time": "kahdsl",
+    }
+    return render(request, "HtmlFiles/check.html", context)
+
+def staff_info(request):
+    context = {
+        "time": "kahdsl",
+    }
+    return render(request, "HtmlFiles/staff.html", context)
+
+def monitoring(request):
+    context = {
+        "time": "kahdsl",
+    }
+    return render(request, "HtmlFiles/monitoring.html", context)
