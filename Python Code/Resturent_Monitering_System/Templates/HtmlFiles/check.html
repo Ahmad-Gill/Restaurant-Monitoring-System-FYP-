@@ -1,0 +1,30 @@
+{% extends "HtmlFiles/Base.html" %}
+{% block title %}Settings{% endblock title %}
+
+{% load static %}
+
+{% block body %}
+    <main>
+        <section>
+            <h2>Table Cleanliness Check</h2>
+            <form>
+                <label for="table-number">Table Number:</label>
+                <input type="number" id="table-number" name="table-number"><br><br>
+                <label for="cleanliness-status">Cleanliness Status:</label>
+                <select id="cleanliness-status" name="cleanliness-status">
+                    <option value="clean">Clean</option>
+                    <option value="dirty">Dirty</option>
+                </select><br><br>
+                <button type="submit">Save</button>
+            </form>
+        </section>
+        <section>
+            <h2>Video Storage</h2>
+            <form>
+                <label for="video-url">Video URL:</label>
+                <input type="url" id="video-url" name="video-url"><br><br>
+                <button type="submit">Save</button>
+            </form>
+        </section>
+    </main>
+{% endblock %}

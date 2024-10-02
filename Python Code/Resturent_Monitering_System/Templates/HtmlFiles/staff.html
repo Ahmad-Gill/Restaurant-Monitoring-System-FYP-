@@ -1,0 +1,33 @@
+{% extends "HtmlFiles/Base.html" %}
+{% block title %}Staff Platform{% endblock title %}
+
+{% load static %}
+
+{% block body %}
+    <main>
+        <section>
+            <h2>Staff Profile</h2>
+            <form>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name"><br><br>
+                <label for="role">Role:</label>
+                <select id="role" name="role">
+                    <option value="waiter">Waiter</option>
+                    <option value="chef">Chef</option>
+                    <option value="manager">Manager</option>
+                </select><br><br>
+                <button type="submit">Save</button>
+            </form>
+        </section>
+        <section>
+            <h2>Dress Code Check</h2>
+            <form>
+                <label for="apron">Apron:</label>
+                <input type="checkbox" id="apron" name="apron"><br><br>
+                <label for="head-cap">Head Cap:</label>
+                <input type="checkbox" id="head-cap" name="head-cap"><br><br>
+                <button type="submit">Check</button>
+            </form>
+        </section>
+    </main>
+{% endblock %}
