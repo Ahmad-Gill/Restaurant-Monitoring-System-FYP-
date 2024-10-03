@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.contrib import messages
 from django.urls import reverse
-from .models import GeneratedValue  # Adjust based on your project structure
+from .models import GeneratedValue,Categories  # Adjust based on your project structure
 from django.http import JsonResponse
 from .models import GeneratedValue
 from python_code.generate_random_value import generate_random_value
@@ -20,8 +20,10 @@ def main(request):
 def categories(request):
     if request.user.is_anonymous:
         return redirect("/login")
-    return render(request, 'HtmlFiles/categories.html')
+    categories_list = Categories.objects.all()
 
+    # Pass the categories to the template
+    return render(request, 'HtmlFiles/categories.html', {'categories': categories_list})
 # Login / logout
 def login(request):
     if request.method == 'POST':

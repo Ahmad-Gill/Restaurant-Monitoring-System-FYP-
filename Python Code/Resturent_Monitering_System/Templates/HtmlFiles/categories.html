@@ -1,20 +1,41 @@
 {% extends "HtmlFiles/Base.html" %}
-{% block title %}New Page{% endblock title %}
+{% block title %}Categories{% endblock title %}
 
 {% load static %}
 
 {% block home_active %}active{% endblock home_active %}
 
 {% block body %}
-
-<header>
-    <h1>Welcome to the New Page</h1>
-</header>
+<link href="{% static 'CssFiles/categories.css' %}" rel="stylesheet">
+<script src="{% static 'JavaScriptFiles/categories.js' %}"></script>
+<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
 
 <main>
     <section>
-        <h2>This is the new content.</h2>
-        <p>Thank you for visiting!</p>
+
+        {% if categories %}
+<div class="diagonal-image-container">
+    {% for category in categories %}
+        <div class="image-item {% if loop.index == 1 %}center{% elif loop.index == 2 %}top-right{% elif loop.index == 3 %}bottom-right{% endif %}" id="image-{{ loop.index }}">
+            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
+            <div class="hidden-text">
+                <strong>{{ category.name }}</strong>
+                <p>This is some additional text for {{ category.some_text }}.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+        
+        
+        
+        
+        
+        
+
+        {% else %}
+            <p>No categories available.</p>
+        {% endif %}
     </section>
 </main>
 

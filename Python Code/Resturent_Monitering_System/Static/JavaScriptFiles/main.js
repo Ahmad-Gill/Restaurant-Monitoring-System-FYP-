@@ -1,3 +1,55 @@
+// Function to handle the typing effect
+function typeEffect(element, text, speed, callback) {
+    let i = 0;
+    element.innerHTML = "";  // Clear any existing content before typing starts
+    element.style.visibility = "visible"; 
+    let interval = setInterval(function () {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i); // Add one character at a time
+            i++;
+        } else {
+            clearInterval(interval); // Stop when all text is written
+            if (callback) callback();  // Call the callback when typing is done
+        }
+    }, speed); // Speed at which characters are added (in milliseconds)
+}
+
+// Function to show the slider after text animation
+function showSlider() {
+    const sliderContainer = document.querySelector('.slider-container');
+    sliderContainer.style.visibility = "visible"; // Make the slider visible
+    sliderContainer.style.opacity = 1; // Fade in the slider
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const headline1 = document.getElementById("headline1");
+    const headline2 = document.getElementById("headline2");
+    const description = document.getElementById("description");
+
+    // Get text content from HTML elements
+    const headline1Text = headline1.textContent.trim(); 
+    const headline2Text = headline2.textContent.trim(); 
+    const descriptionText = description.textContent.trim(); 
+
+    // Clear the initial content in the HTML before typing effect
+    headline1.textContent = "";
+    headline2.textContent = "";
+    description.textContent = "";
+
+    // Apply typing effect using the retrieved text
+    typeEffect(headline1, headline1Text, 100); // 100ms per character
+    setTimeout(() => {
+        typeEffect(headline2, headline2Text, 50);
+    }, 2000); // Delay for the second headline
+    setTimeout(() => {
+        typeEffect(description, descriptionText, 50);
+    }, 4000); // Delay for the description
+
+    // Show slider after text typing is done
+    setTimeout(showSlider, 6500); // Adjust timing to match text completion
+});
+
+
 
 // ------------------------------Add A slider---------------------------------
 
@@ -57,11 +109,10 @@ document.addEventListener('DOMContentLoaded', function () {
             newPosition = 0;
         } else if (newPosition > maxPosition) {
             newPosition = maxPosition;
-   
+    
             window.location.href = "/login/"; 
         }
         
-
         sliderThumb.style.left = `${newPosition}px`;
 
         // Calculate progress as a percentage
@@ -85,33 +136,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-//---------------------------------- add seffect on TExt Writing --------------------------------------
 
 
-function typeEffect(element, text, speed) {
-    let i = 0;
-    element.innerHTML = "";  // Clear any existing content before typing starts
-    element.style.visibility = "visible"; 
-    let interval = setInterval(function () {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i); // Add one character at a time
-            i++;
-        } else {
-            clearInterval(interval); // Stop when all text is written
-        }
-    }, speed); // Speed at which characters are added (in milliseconds)
-}
 
-document.addEventListener("DOMContentLoaded", function() {
-    const headline1 = document.getElementById("headline1");
-    const headline2 = document.getElementById("headline2");
-    const description = document.getElementById("description");
-
-    typeEffect(headline1, "Innovative Monitoring Awaits", 100); // 100ms per character
-    setTimeout(() => {
-        typeEffect(headline2, "Optimize Your Operations with Precision Monitoring", 50);
-    }, 2000); // Delay to start the second headline
-    setTimeout(() => {
-        typeEffect(description, "Our system delivers real-time insights to streamline your restaurant’s efficiency.", 50);
-    }, 4000); // Delay for the description
+$(document).ready(function(){
+    $("#testimonial-slider").owlCarousel({
+        items: 3, 
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 5000,
+        autoplayHoverPause: true,
+        smartSpeed: 800,
+        nav: true,
+        dots: true,
+        navText: ["<span class='owl-prev'>&lt;</span>", "<span class='owl-next'>&gt;</span>"]
+    });
 });
+

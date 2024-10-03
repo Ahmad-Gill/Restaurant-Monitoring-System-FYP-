@@ -1,9 +1,14 @@
 @import url('../CssFiles/variables.css');
 
 html, body {
-    height: 100%;
-    overflow: hidden; 
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    overflow-y: scroll; /* Enable vertical scrolling */
+    -ms-overflow-style: none;  /* IE and Edge */
+    height: auto; 
     margin: 0; 
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none; /* Hide scrollbar */
 }
 
 body {
@@ -87,6 +92,21 @@ body::before {
 .navbar .nav-link:hover::after {
     transform: scaleX(1); 
 }
+
+
+
+.admin-enabled {
+    color: var(--headings); /* Color for Ahmad */
+    font-weight: bold;
+}
+
+.admin-disabled {
+    color: #aaaaaa; /* Color for other users */
+    font-weight: bold;
+    pointer-events: none; 
+    text-decoration: none; 
+}
+
 
 /* --------------------Container------------------------------------*/
 

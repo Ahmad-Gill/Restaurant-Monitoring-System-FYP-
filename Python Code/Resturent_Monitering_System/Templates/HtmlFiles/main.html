@@ -6,11 +6,35 @@
 {% block home_active %}active{% endblock home_active %}
 
 {% block body %}
+{% load static %}
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Include jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Include Owl Carousel CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
+
+    <!-- Include Owl Carousel JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="{% static 'CssFiles\owl.carousel.min.css' %}">
+
 
 <!-- Include slider.css for styling the slider -->
 <link href="{% static 'CssFiles/main.css' %}" rel="stylesheet">
 <script src="{% static 'JavaScriptFiles/main.js' %}"></script>
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
+
+
+
+
 
 <header>
     <h1 id="headline1">Innovative Monitoring Awaits</h1>
@@ -32,6 +56,206 @@
             </div>
            
         </div>
+
+
+
+
+{% comment %} ----------------------------------COntent-------------------------------------------------- {% endcomment %}
+
+<section id="hero">
+    <div class="container">     
+        <div class="row about-content">
+            <div class="col-lg-5 order-lg-2">
+                <div class="hero-portrait">
+                    <div class="pic" data-aos="fade-up" data-aos-delay="600"></div>
+                </div>
+            </div>
+            <div class="col-lg-7 order-lg-1 hero-content">
+                <span class="h3" data-aos="fade-up" data-aos-delay="0">Transforming Restaurant Operations</span>
+                <h1 class="name" data-aos="fade-up" data-aos-delay="200"><span>Data Scientists & AI Specialists</span></h1>
+                <button type="button" class="btn btn-sm mt-3 mb-3 btn-showcase" data-aos="fade-up" data-aos-delay="400">
+                    <i class="bi bi-graph-up"></i> AI-Powered Insights Team
+                </button>
+                
+                <p class="tagline mb-3" data-aos="fade-up" data-aos-delay="600">
+                    Restaurants often struggle with operational inefficiencies and a lack of real-time insights, leading to reduced productivity and customer dissatisfaction. To address these challenges, we—<strong>Muhammad Ahmad, Nimra Amer, and Hamza Rao</strong>—have developed a cutting-edge <strong>Restaurant Monitoring System</strong>.
+                </p>
+                    
+                <p class="tagline mb-3" data-aos="fade-up" data-aos-delay="600">
+                    Our innovative solution utilizes CCTV footage and advanced machine learning techniques to provide actionable insights that enhance operational performance and improve customer satisfaction, ultimately driving success in the hospitality industry.
+                </p>
+                
+                <div class="d-flex call-to-action">
+                    <a href="#projects" data-aos="fade-up" data-aos-delay="800">
+                        <button type="button" class="btn btn-light secondary-bg-btn">Contact Us<i class="bi bi-arrow-up-right-circle"></i></button>
+                    </a>
+                </div>
+                                 
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+{% comment %} -------------------------------------Services----------------------------------------- {% endcomment %}
+<section id="things-i-love">
+    <div class="container">
+        <h2 class="section-heading text-center">Transforming Ideas into Solutions</h2>
+        <div class="row justify-content-center pt-3 gy-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="card">
+                    <div class="circle-container">
+                        <div class="circle"><i class="bi bi-bar-chart"></i></div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-title">CCTV Analytics</p>
+                        <p class="card-text">We utilize advanced computer vision techniques to analyze CCTV footage, providing actionable insights into customer behavior and restaurant operations.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="card">
+                    <div class="circle-container">
+                        <div class="circle"><i class="bi bi-lightbulb"></i></div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-title">Machine Learning Solutions</p>
+                        <p class="card-text">Our team develops tailored machine learning models that enhance decision-making processes, optimize inventory management, and improve customer engagement strategies.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="card">
+                    <div class="circle-container">
+                        <div class="circle"><i class="bi bi-code"></i></div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-title">Deep Learning Insights</p>
+                        <p class="card-text">We harness the power of deep learning to uncover deep insights from complex datasets, driving innovation and efficiency within restaurant operations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+</section>
+
+
+
+
+
+
+
+
+    {% comment %} <!----------------------------------------- About US -------------------------------------------------------------> {% endcomment %}
+    <section id="about">
+        <div class="container">
+            <h2 class="section-heading text-center">About Our Team</h2>
+            <p class="text-center muted-text mt-3 mb-4">Meet the people behind the magic!</p>
+            <div class="row justify-content-center" data-aos="fade-down" data-aos-delay="200">
+                <div class="col-lg-5 about-portrait">
+                    <div class="img-fluid pic" alt="Our Team Portrait"></div>
+                </div>
+                
+                <div class="col-lg-7">
+                    <p class="bio">
+                        Hello! We are a dedicated team of students from the 2021 batch of Data Science at FAST National University of Computer and Emerging Sciences. Our passion lies in data science, artificial intelligence, and backend development. We leverage our knowledge to develop innovative solutions that integrate machine learning, data analysis, and cutting-edge technologies like the MERN stack.
+                        </br></br>
+                        Our goal is to apply our expertise in data science techniques—ranging from machine learning to statistical modeling—to extract meaningful insights from complex datasets. We also focus on backend development, ensuring our systems are scalable, efficient, and user-friendly.
+                        </br></br>
+                        As a collaborative team, we strive to push the limits of technology by exploring new advancements in AI, web development, and data science. We are committed to addressing real-world challenges and delivering impactful solutions for both our clients and the tech community.
+                    </p>
+                </div>
+                
+                
+            </div>
+        </div>
+    </section>
+    
+
+
+
+
+
+
+
+
+
+
+<!-- Testimonials -->
+<section id="testimonials">
+    <div class="container">
+        <h2 class="section-heading text-center">Testimonials</h2>
+        <p class="text-center muted-text mt-3 mb-4">What do our clients and teachers say about us.</p>
+        <div class="row mt-4 gy-4" data-aos="fade-down" data-aos-delay="200">
+            <div class="col-md-12">
+                <div id="testimonial-slider" class="owl-carousel">
+                    <div class="testimonial">
+                        <p class="description">
+                            The team's collaboration brings positivity and creativity to every project, making it a pleasure to work together. Their approach consistently leaves a lasting impression.
+                        </p>
+                        <div class="pic">
+                            <img src="{% static 'images/about.jpeg' %}" alt="Image">
+                        </div>
+                        <div class="detail">
+                            <h4 class="name">Client</h4>
+                            <small class="role">Satisfied Client</small>
+                        </div>
+                    </div>
+     
+                    <div class="testimonial">
+                        <p class="description">
+                            The dedication and hard work of the team shine through in every project. They inspire everyone around them to strive for excellence.
+                        </p>
+                        <div class="pic">
+                            <img src="{% static 'images/about.jpeg' %}" alt="Image">
+                        </div>
+                        <div class="detail">
+                            <h4 class="name">Teacher</h4>
+                            <small class="role">Inspiring Educator</small>
+                        </div>
+                    </div>
+
+                    <div class="testimonial">
+                        <p class="description">
+                            The team's commitment to excellence is commendable. Their passion for delivering quality work makes collaboration a rewarding experience.
+                        </p>
+                        <div class="pic">
+                            <img src="{% static 'images/about.jpeg' %}" alt="Image">
+                        </div>
+                        <div class="detail">
+                            <h4 class="name">Client</h4>
+                            <small class="role">Satisfied Client</small>
+                        </div>
+                    </div>
+
+                    <div class="testimonial">
+                        <p class="description">
+                            Working with this team has been exceptional. Their dedication to creating outstanding work inspires confidence and trust in their abilities.
+                        </p>
+                        <div class="pic">
+                            <img src="{% static 'images/about.jpeg' %}" alt="Image">
+                        </div>
+                        <div class="detail">
+                            <h4 class="name">Teacher</h4>
+                            <small class="role">Inspiring Educator</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
 
 
 {% endblock %}
