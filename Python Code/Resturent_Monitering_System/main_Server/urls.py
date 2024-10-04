@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import generate_value_view 
+from .views import customer_waiting_time_for_order, generate_value_view 
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -15,6 +15,9 @@ urlpatterns = [
     #Auth
      path('login/', views.login, name='login'),
      path("logoutUser/", views.logoutUser, name='logoutUser'),
+
+     # Categories
+       path('waiting-time-for-order/', views.customer_waiting_time_for_order, name='waiting_time_for_order'),  # This is your URL pattern
 
 
      # Sample PY file 

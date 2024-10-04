@@ -55,6 +55,7 @@ html, body {
     top: 0; 
     right: 5%; 
     transform: translate(10%, -10%); 
+    pointer-events: none;
 }
 
 
@@ -62,11 +63,13 @@ html, body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%); 
+    pointer-events: auto
 }
 .bottom-right {
     bottom: 0%; 
     left: 0%; 
     transform: translate(10%, 10%); 
+    pointer-events: none;
 }
 
 
@@ -89,4 +92,14 @@ html, body {
 
 .center:hover .hidden-text {
     display: block; /* Show the text on hover */
+}
+
+.page-heading {
+    position: absolute;  /* Position it relative to the nearest positioned ancestor */
+    top: 10%;            /* 10% from the top */
+    left: 0%;           /* 10% from the left */
+    z-index: 2;         /* Ensure it appears above other elements */
+    font-size: 24px;    /* Adjust font size as needed */
+    color: var(--headings);        /* Change text color as needed */
+    /* Add additional styling here */
 }
