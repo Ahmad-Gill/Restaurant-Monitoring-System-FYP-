@@ -8,6 +8,8 @@ urlpatterns = [
 
     # main path 
     path('', views.main, name='main'),
+    path('analytics/', views.analytics_review, name='analytics'),
+    path('analytics_table/', views.analytics_tables, name='analytics_table'),
 
     # Categories
     path('categories/', views.categories, name='categories'),

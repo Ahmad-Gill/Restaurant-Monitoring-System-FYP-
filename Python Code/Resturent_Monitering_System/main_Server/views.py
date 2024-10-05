@@ -49,12 +49,51 @@ def generate_value_view(request):
     generated_value = generate_random_value()  # Call your function to generate a random value
     return render(request, 'your_template.html', {'generated_value': generated_value})  # Replace 'your_template.html' with your actual template name
 
+
 def analytics_review(request):
     context = {
-        "count": 2,
-        "time": "kahdsl",
+        "top_dishes": [
+            {"name": "Pizza", "count": 3000},
+            {"name": "Burger", "count": 250},
+            {"name": "Pasta", "count": 200},
+            {"name": "Salad", "count": 150},
+            {"name": "Steak", "count": 100},
+            {"name": "coffee", "count": 20},
+            {"name": "chai", "count": 10},
+            {"name": "doodh", "count": 100}
+        ],
+        "customer_count": [
+            {"date": "Mon", "customer": 5000},
+            {"date": "Tue", "customer": 5500},
+            {"date": "Wed", "customer": 6000},
+            {"date": "Thu", "customer": 5800},
+            {"date": "Fri", "customer": 7000},
+            {"date": "Sat", "customer": 8000},
+            {"date": "Sun", "customer": 7500}
+        ],
+        "peak_hours": [
+            {"time": "11am", "count": 20},
+            {"time": "12pm", "count": 40},
+            {"time": "1pm", "count": 60},
+            {"time": "2pm", "count": 50},
+            {"time": "3pm", "count": 30},
+            {"time": "4pm", "count": 35},
+            {"time": "5pm", "count": 45},
+            {"time": "6pm", "count": 70},
+            {"time": "7pm", "count": 80},
+            {"time": "8pm", "count": 60}
+        ],
+        "satisfaction": [
+            {"rating": "Excellent", "count": 60},
+            {"rating": "Good", "count": 25},
+            {"rating": "Average", "count": 10},
+            {"rating": "Poor", "count": 5}
+        ]
     }
     return render(request, "HtmlFiles/analytics.html", context)
+
+def analytics_tables(request):
+    return render(request, 'analytics_tables.html')
 
 def checks(request):
     context = {
