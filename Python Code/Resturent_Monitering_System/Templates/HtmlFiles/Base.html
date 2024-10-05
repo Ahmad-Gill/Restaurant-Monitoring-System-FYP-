@@ -30,6 +30,9 @@
                             <a class="nav-link" href="/">Home</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'analytics' %}">Analytics</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {% if user.username != 'Ahmad' %}disabled{% endif %} 
                                {% if user.username != 'Ahmad' %} admin-disabled {% else %} admin-enabled {% endif %}"
                                href="{% url 'admin:index' %}">Admin</a>
