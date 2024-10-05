@@ -1,20 +1,297 @@
 {% extends "HtmlFiles/Base.html" %}
-{% block title %}Analytics{% endblock title %}
+
+{% block title %}Analytics Dashboard{% endblock title %}
 
 {% load static %}
-
+<link href="{% static 'CssFiles/analytics.css' %}" rel="stylesheet">
 {% block body %}
+<style>
+@import url('../CssFiles/variables.css');
 
-    <main>
-        <section>
-            <h2>Most Ordered Dishes</h2>
-            <canvas id="most-ordered-dishes-chart"></canvas>
-            <p>{{ count }}</p>
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a2e;
+}
 
-        </section>
-        <section>
-            <h2>Customer Count</h2>
-            <canvas id="customer-count-chart"></canvas>
-        </section>
-    </main>
-{% endblock %}
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 40px;
+    box-sizing: border-box;
+    background-color:transparent;
+    color: #ffffff; /* White text color */
+    overflow-y: auto; /* Allow vertical scrolling */
+}
+
+.dashboard-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffffff;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 30px; /* Add some bottom margin for scrolling */
+}
+
+.dashboard-card {
+    background-color: black; /* Darker card background */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.dashboard-card h4 {
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: #ffffff;
+}
+
+.chart-container {
+    width: 100%;
+    height: 250px; /* Reduced height */
+    position: relative;
+}
+
+.icon-link {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.icon-link-text {
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.icon-container {
+    width: 30px;
+    height: 30px;
+    background-color: #5b4b8a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.icon-container:hover {
+    transform: scale(1.1);
+}
+
+.icon-container svg {
+    width: 18px;
+    height: 18px;
+    fill: #ffffff;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<a href="{% url 'analytics_table' %}" class="icon-link">
+    <span class="icon-link-text">Analytics Table</span>
+    <div class="icon-container pulse">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+        </svg>
+    </div>
+</a>
+
+<div class="dashboard-container">
+    <h3 class="dashboard-title">Restaurant Analytics Dashboard</h3>
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <h4>Most Ordered Dishes</h4>
+            <div class="chart-container">
+                <canvas id="dishesChart"></canvas>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <h4>Customer Count</h4>
+            <div class="chart-container">
+                <canvas id="CustomerChart"></canvas>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <h4>Peak Hours</h4>
+            <div class="chart-container">
+                <canvas id="peakHoursChart"></canvas>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <h4>Customer Satisfaction</h4>
+            <div class="chart-container">
+                <canvas id="satisfactionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+                labels: {
+                    color: '#ffffff'
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    font: {
+                        size: 10
+                    },
+                    color: '#ffffff'
+                }
+            },
+            x: {
+                ticks: {
+                    font: {
+                        size: 10
+                    },
+                    color: '#ffffff'
+                }
+            }
+        }
+    };
+
+    // Most Ordered Dishes Chart
+    new Chart(document.getElementById('dishesChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Pizza', 'Burger', 'Pasta', 'Salad', 'Steak'],
+            datasets: [{
+                label: 'Orders',
+                data: [3000, 250, 200, 150, 100],
+                backgroundColor: 'rgba(91, 75, 138, 0.7)',
+                borderColor: 'rgba(91, 75, 138, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: chartOptions
+    });
+
+    // Customer Count Chart
+    new Chart(document.getElementById('CustomerChart'), {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Customers',
+                data: [5000, 5500, 6000, 5800, 7000, 8000, 7500],
+                borderColor: 'rgba(91, 75, 138, 1)',
+                tension: 0.1
+            }]
+        },
+        options: chartOptions
+    });
+
+    // Peak Hours Chart
+    new Chart(document.getElementById('peakHoursChart'), {
+        type: 'bar',
+        data: {
+            labels: ['11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm','9pm','10pm','11pm'],
+            datasets: [{
+                label: 'Customers',
+                data: [20, 40, 60, 50, 30, 35, 45, 70, 80, 60,20,30,30],
+                backgroundColor: 'rgba(91, 75, 138, 0.7)',
+                borderColor: 'rgba(91, 75, 138, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: chartOptions
+    });
+
+    // Customer Satisfaction Chart
+    new Chart(document.getElementById('satisfactionChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Excellent', 'Good', 'Fair', 'Poor'],
+            datasets: [{
+                label: 'Satisfaction',
+                data: [60, 20, 10, 10],
+                backgroundColor: [
+                    'rgba(91, 75, 138, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(91, 75, 138, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        font: {
+                            size: 12
+                        },
+                        color: '#ffffff'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: false
+                },
+                y: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Add hover effect to icon
+    const iconContainer = document.querySelector('.icon-container');
+    iconContainer.addEventListener('mouseenter', () => {
+        iconContainer.style.transform = 'scale(1.1) rotate(90deg)';
+    });
+    iconContainer.addEventListener('mouseleave', () => {
+        iconContainer.style.transform = 'scale(1) rotate(0deg)';
+    });
+});
+</script>
+{% endblock body %}
