@@ -16,7 +16,7 @@
 <body>
     <div class="wrapper" style="position: relative; min-height: 100vh;">
     {% comment %} --------------------Nave BAR -------------------- {% endcomment %}
-        <nav class="navbar navbar-expand-lg" style=" color: #ffffff; font-weight: bold; position: relative; z-index: 2;">
+        <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/" >
                     <img src="{% static 'images/bg_logo.png' %}" alt="Logo" style="max-width: 40px; margin-right: 8px; opacity: 1;">
@@ -49,14 +49,14 @@
         <div class="logo">
             <img src="{% static 'images/bg_logo.png' %}" alt="logo" id="rotatingLogo">
         </div>
-        {% if messages %}
+        {% comment %} {% if messages %}
         {% for message in messages %}
           <div class="alert alert-{{ message.tags }} alert-dismissible fade show my-0 " role="alert">
             <strong>{{ message }}</strong>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
-        {% endif %}
+        {% endif %} {% endcomment %}
         <!-- Content from child templates -->
         <div class="content">
             {% block body %}

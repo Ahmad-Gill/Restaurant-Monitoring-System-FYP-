@@ -29,6 +29,7 @@ body {
     flex-direction: column; 
     min-height: 100vh; 
     position: relative; 
+    
 }
 
 /* Black overlay over the body */
@@ -47,6 +48,7 @@ body::before {
     display: flex;
     flex-direction: column;
     flex-grow: 1; 
+    min-height: 100vh;
 }
 
 
@@ -97,6 +99,11 @@ body::before {
 
 .navbar .nav-link:hover::after {
     transform: scaleX(1); 
+    color: var(--headings);
+}
+.navbar .nav-link:hover {
+    transform: scaleX(1); 
+    color: var(--headings);
 }
 
 
@@ -107,12 +114,28 @@ body::before {
 }
 
 .admin-disabled {
-    color: #aaaaaa; /* Color for other users */
+    color: var(--headings); /* Color for other users */
     font-weight: bold;
     pointer-events: none; 
     text-decoration: none; 
 }
 
+/* CssFiles/navbar.css */
+.navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* High z-index */
+    width: 100%;
+    color: var(--headings);
+    font-weight: bold;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+.nav-link.active {
+    font-weight: bold; 
+    color: var(--headings);
+}
 
 /* --------------------Container------------------------------------*/
 
@@ -123,6 +146,7 @@ body::before {
     text-align: center;
     padding-top: 50px;
     flex-grow: 1; 
+    margin-top: 30px; 
 }
 /* --------------------Footer------------------------------------*/
 .footer {

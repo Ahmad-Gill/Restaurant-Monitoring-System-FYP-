@@ -17,7 +17,8 @@ urlpatterns = [
      path("logoutUser/", views.logoutUser, name='logoutUser'),
 
      # Categories
-       path('waiting-time-for-order/', views.customer_waiting_time_for_order, name='waiting_time_for_order'),  # This is your URL pattern
+       path('waiting-time-for-order/', views.customer_waiting_time_for_order, name='waiting_time_for_order'),
+       path('waiting-time-for-order_Visualization/', views.customer_waiting_time_for_order_Visualization, name='waiting_time_for_order_Visualization'),  
 
 
      # Sample PY file 

@@ -79,6 +79,14 @@ def monitoring(request):
 def customer_waiting_time_for_order(request):
     waiting_times = CustomerOrderWaitingTime.objects.all()  # Fetch all records
     context = {
-        'waiting_times': waiting_times
+        'waiting_times': waiting_times,
+        'active_page': 'statistics', 
     }
     return render(request, 'HtmlFiles/customer_waiting_time_for_order.html', context)
+def customer_waiting_time_for_order_Visualization(request):
+    waiting_times = CustomerOrderWaitingTime.objects.all()
+    context = {
+        'waiting_times': waiting_times,
+        'active_page': 'Visualization', 
+    }
+    return render(request, 'HtmlFiles/customer_waiting_time_for_order_Visualization.html', context)

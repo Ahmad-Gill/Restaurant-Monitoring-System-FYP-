@@ -1,23 +1,60 @@
 {% extends "HtmlFiles/Base.html" %}
-{% block title %}customer Waiting time{% endblock title %}
+{% block title %}Customer Waiting Time for Order{% endblock title %}
 
 {% load static %}
 
 {% block home_active %}active{% endblock home_active %}
 
 {% block body %}
-{% load static %}
 
-
-<!-- Include slider.css for styling the slider -->
-<link href="{% static 'CssFiles/main.css' %}" rel="stylesheet">
-<script src="{% static 'JavaScriptFiles/main.js' %}"></script>
+<!-- Link to external CSS and JS files -->
+<link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
+<script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order.js' %}"></script>
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
 
 
-<P>Helo</p>
 
+<div class="page-slider">
+   <h2> <a href="{% url 'waiting_time_for_order' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
+   <h2> <a href="{% url 'waiting_time_for_order_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+</div>
 
-
-
+<div class="containerr">
+    <h2>Customer Waiting Time for Order</h2>
+    <table class="waiting-time-table">
+        <thead>
+            <tr>
+                <th>Table Number</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Waiting Time</th>
+                <th>Date</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for time in waiting_times %}
+            <tr>
+                <td>{{ time.table_number }}</td>
+                <td>{{ time.start_time|date:"g:i A" }}</td>
+                <td>{{ time.end_time|date:"g:i A" }}</td>
+                <td>
+                    <!-- Add a div to hold the waiting time -->
+                    <div class="waiting-time" data-start="{{ time.start_time|date:'Y-m-d H:i:s' }}" data-end="{{ time.end_time|date:'Y-m-d H:i:s' }}">
+                        Loading...
+                    </div>
+                </td>
+                <td>{{ time.date }}</td>
+                <td>
+                    {% if time.visual_representation %}
+                        <img src="{{ time.visual_representation.url }}" alt="Customer Image" class="img-thumbnail">
+                    {% else %}
+                        No Image Available
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

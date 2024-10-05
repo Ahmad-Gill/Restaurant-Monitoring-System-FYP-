@@ -1,0 +1,23 @@
+{% extends "HtmlFiles/Base.html" %}
+{% block title %}Customer Waiting Time for Order{% endblock title %}
+
+{% load static %}
+
+{% block home_active %}active{% endblock home_active %}
+
+{% block body %}
+
+<!-- Link to external CSS and JS files -->
+<link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
+<link href="{% static 'CssFiles/customer_waiting_time_for_order_Visualization.css' %}" rel="stylesheet">
+<script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order_Visualization.js' %}"></script>
+<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
+
+
+
+<div class="page-slider">
+   <h2> <a href="{% url 'waiting_time_for_order' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
+   <h2> <a href="{% url 'waiting_time_for_order_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+</div>
+<canvas id="waitingTimeLineChart" width="400" height="200"></canvas>
+{% endblock %}

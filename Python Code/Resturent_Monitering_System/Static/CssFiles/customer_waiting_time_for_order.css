@@ -1,0 +1,108 @@
+ /* -------------------------Slider------------------------ */
+
+ .page-slider {
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    margin: 20px 0; 
+    padding: 10px; 
+    border-radius: 5px;
+    
+}
+
+.slider-button {
+    text-decoration: none; 
+    background-color: transparent; 
+    color: var(--headings);
+    padding: 10px 15px; 
+    margin: 0 10px; 
+    border: none;
+    border-bottom: 4px solid var(--headings);
+    border-radius: 0; 
+    transition: color 0.3s, transform 0.2s, border-bottom-color 0.3s;
+}
+
+.slider-button:hover {
+    border-bottom-color: var(--hover); 
+    transform: scale(1.05);
+}
+.slider-button.active {
+    border-bottom-color: var(--hover); 
+    transform: scale(1.05);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*----------------------- Containers Styling -------------------------*/
+.containerr {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: black;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 90px;
+}
+
+/* Table Styling */
+.waiting-time-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.waiting-time-table th, .waiting-time-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.waiting-time-table th {
+    background-color: black;
+    font-weight: bold;
+}
+
+.waiting-time-table td {
+    vertical-align: middle;
+}
+
+/* Image Styling */
+.img-thumbnail {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--headings);
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .waiting-time-table, .waiting-time-table th, .waiting-time-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .waiting-time-table tr {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .waiting-time-table th {
+        text-align: left;
+    }
+
+    .img-thumbnail {
+        width: 80px;
+        height: 80px;
+    }
+}
