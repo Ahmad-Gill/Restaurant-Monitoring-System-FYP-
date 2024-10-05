@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.contrib import messages
 from django.urls import reverse
-from .models import GeneratedValue,Categories  # Adjust based on your project structure
+from .models import GeneratedValue,Categories,CustomerOrderWaitingTime  # Adjust based on your project structure
 from django.http import JsonResponse
 from .models import GeneratedValue
 from python_code.generate_random_value import generate_random_value
@@ -112,3 +112,12 @@ def monitoring(request):
         "time": "kahdsl",
     }
     return render(request, "HtmlFiles/monitoring.html", context)
+
+# COstomer Waiting Time for Order 
+
+def customer_waiting_time_for_order(request):
+    waiting_times = CustomerOrderWaitingTime.objects.all()  # Fetch all records
+    context = {
+        'waiting_times': waiting_times
+    }
+    return render(request, 'HtmlFiles/customer_waiting_time_for_order.html', context)

@@ -12,19 +12,27 @@
 
 <main>
     <section>
-
+        <h1 class="page-heading">Select Category</h1> 
         {% if categories %}
-<div class="diagonal-image-container">
-    {% for category in categories %}
-        <div class="image-item {% if loop.index == 1 %}center{% elif loop.index == 2 %}top-right{% elif loop.index == 3 %}bottom-right{% endif %}" id="image-{{ loop.index }}">
-            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
-            <div class="hidden-text">
-                <strong>{{ category.name }}</strong>
-                <p>This is some additional text for {{ category.some_text }}.</p>
-            </div>
+        <div class="diagonal-image-container">
+            {% for category in categories %}
+                <div class="image-item {% if loop.index == 1 %}center{% elif loop.index == 2 %}top-right{% elif loop.index == 3 %}bottom-right{% endif %}" id="image-{{ loop.index }}">
+                    {% if category.URL %}
+                        <a href="{% url category.URL %}">  <!-- Use the category.URL correctly -->
+                            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
+                        </a>
+                    {% else %}
+                        <span>No link available</span>  <!-- Fallback if URL is None -->
+                    {% endif %}
+                    <div class="hidden-text">
+                        <h3><strong>{{ category.name }}</strong></h3>
+                        <p>This is some additional text for {{ category.some_text }}.</p>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
+        
+        
 
         
         

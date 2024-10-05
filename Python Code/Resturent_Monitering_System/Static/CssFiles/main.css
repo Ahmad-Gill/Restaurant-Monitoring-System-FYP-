@@ -522,3 +522,92 @@ h1 {
 .owl-carousel .owl-item {
     display: inline-block;
 }
+
+
+
+
+
+
+
+
+
+
+
+/*--------------------------------------------------------------
+# Contact Section
+--------------------------------------------------------------*/
+
+#contact{
+    padding: 100px 0;
+    min-height: 100vh;
+    background-size: contain;
+    color: #fff;
+}
+
+.contact-form{
+    padding: 35px;
+    border-radius: 15px;
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 1px 0 rgba(144, 81, 227, .5), 0 0 0.5px 0.5px rgba(141, 53, 229, .336);
+    -webkit-box-shadow: 0 0 1px 0 rgba(144, 81, 227, .5), 0 0 0.5px 0.5px rgba(141, 53, 229, .336);
+    color: var(--headings);
+}
+
+.contact-form .form-control {
+    padding: 0.775rem 1.05rem;
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--headings);
+    border: 1px solid rgba(255, 255, 255, 0.6); 
+}
+
+.contact-form .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7); 
+}
+
+
+.contact-form .form-control:focus{
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    border-color: #850dd5;
+}
+
+.contact-form .btn{
+    background-color: var(--primary-color);
+    color: var(--headings);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.contact-form .btn:hover {
+    background-color: var(--hover); 
+
+}
+
+
+
+
+
+
+
+
+
+
+/*--------- Back To Top ------------*/
+
+#backToTopButton{
+    display: none;
+    position: fixed;
+    right: 10px;
+    bottom: 0px;
+    z-index: 999;
+    transition: var(--transition-default);
+    -webkit-transition: var(--transition-default);
+}
+
+
+#backToTopButton:hover{
+    color: var(--primary-color);
+    transform: translate(0, -0.25rem) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1);
+}
