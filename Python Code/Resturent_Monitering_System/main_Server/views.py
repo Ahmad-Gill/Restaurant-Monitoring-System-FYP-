@@ -93,13 +93,10 @@ def analytics_review(request):
     return render(request, "HtmlFiles/analytics.html", context)
 
 def analytics_tables(request):
-    return render(request, 'analytics_tables.html')
+    return render(request, 'HtmlFiles/analytics_tables.html')
 
 def checks(request):
-    context = {
-        "time": "kahdsl",
-    }
-    return render(request, "HtmlFiles/check.html", context)
+    return render(request, "HtmlFiles/check.html")
 
 def staff_info(request):
     context = {
