@@ -1,0 +1,43 @@
+/* --------------------Charts COntainer---------------------- */
+
+.charts-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 20px 0; 
+    gap: 20px; 
+}
+
+canvas {
+    flex: 1 1 300px; 
+    max-width: 48%;
+    height: 300px; 
+    margin: 0;
+    z-index: 1; 
+    background-color: #000;
+}
+.containerr {
+    padding: 20px; 
+    background-color: transparent; 
+    border-radius: 8px; 
+}
+
+
+
+
+/* --------------For Smaller Secreens -------------------- */
+
+/* Media query for screens between 768px and 1200px */
+@media (max-width: 1200px) {
+    canvas {
+        flex: 1 1 45%; /* Two charts side by side */
+    }
+}
+
+/* Optional: Add media query for very small screens */
+@media (max-width: 767px) {
+    canvas {
+        flex: 1 1 100%; /* Full width on smaller screens */
+        max-height: 250px; /* Optional: reduce height on smaller screens */
+    }
+}
