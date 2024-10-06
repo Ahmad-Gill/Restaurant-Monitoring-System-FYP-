@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+h1, h2 {
+    color: white;
+}
+#dashboard {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.status-box {
+    background-color: black;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    width: 30%;
+    color: white;
+}
+#violation-log {
+    background-color: black;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    height: 300px;
+    overflow-y: auto;
+    color: white;
+}
+.violation {
+    color: red;
+    margin-bottom: 10px;
+}
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-right: 10px;
+}
+button:hover {
+    background-color: #45a049;
+}
+#stopButton {
+    background-color: #f44336;
+}
+#stopButton:hover {
+    background-color: #d32f2f;
+}
+.culprit-info {
+    font-weight: bold;
+    color: #FF5733;
+}
