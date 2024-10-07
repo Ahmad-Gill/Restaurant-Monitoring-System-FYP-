@@ -1,59 +1,75 @@
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-}
-h1, h2 {
-    color: white;
-}
-#dashboard {
+@import url('../CssFiles/variables.css');
+
+.table-container {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
 }
-.status-box {
-    background-color: black;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    width: 30%;
-    color: white;
-}
-#violation-log {
-    background-color: black;
-    border: 1px solid #ddd;
+
+.table-wrapper {
+    background-color: var(--background);
     border-radius: 5px;
     padding: 20px;
-    height: 300px;
-    overflow-y: auto;
-    color: white;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    margin: 0 auto;
 }
-.violation {
-    color: red;
-    margin-bottom: 10px;
+
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    margin-right: 10px;
+
+th, td {
+    border: 1px solid white;
+    padding: 10px;
+    text-align: left;
 }
-button:hover {
-    background-color: #45a049;
+
+th {
+    background-color: black;
+    color: var(--headings);
 }
-#stopButton {
-    background-color: #f44336;
+
+tr:nth-child(even) {
+    background-color: var(--background-alt);
 }
-#stopButton:hover {
-    background-color: #d32f2f;
+
+/* Updated styles for image cells */
+td:first-child {
+    width: 100px; /* Set a fixed width for the image column */
+    text-align: center; /* Center the content horizontally */
+    vertical-align: middle; /* Center the content vertically */
 }
-.culprit-info {
-    font-weight: bold;
-    color: #FF5733;
+
+/* Updated styles for images */
+.table-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--headings);
+    display: inline-block; /* Allows vertical centering */
+}
+
+@media (max-width: 768px) {
+    .table-wrapper {
+        width: 100%;
+        padding: 10px; /* Reduced padding for mobile */
+    }
+    
+    td:first-child {
+        width: 60px; /* Smaller width for image column on mobile */
+    }
+    
+    .table-image {
+        width: 50px; /* Smaller image size for mobile */
+        height: 50px;
+    }
+    
+    th, td {
+        padding: 5px; /* Reduced cell padding for mobile */
+    }
 }
