@@ -1,110 +1,57 @@
-const tables = [
-    { id: 'T001', location: 'Main Hall' },
-    { id: 'T002', location: 'Patio' },
-    { id: 'T003', location: 'Bar Area' },
-    { id: 'T004', location: 'Private Room' },
-    { id: 'T005', location: 'Window Side' }
-];
-const chefs = [
-    { id: 'C001', name: 'Abbas', station: 'Grill' },
-    { id: 'C002', name: 'Kazim', station: 'Salad' },
-    { id: 'C003', name: 'Munir', station: 'Pastry' }
-];
-const waiters = [
-    { id: 'W001', name: 'Ahmad', section: 'Main Hall' },
-    { id: 'W002', name: 'Hassan', section: 'Patio' },
-    { id: 'W003', name: 'Sohaib', section: 'Bar Area' },
-    { id: 'W004', name: 'Mohsin', section: 'Private Room' }
-];
+document.addEventListener('DOMContentLoaded', function() {
+    const tables = [
+        { image: staticUrl + 'images/table1.jfif', location: 'Main Hall', date: 'Oct 4, 2024', time: '12:30 PM' },
+        { image: staticUrl + 'images/table2.jfif', location: 'Patio', date: 'Oct 4, 2024', time: '1:15 PM' }
+    ];
+    const chefs = [
+        { image: staticUrl + 'images/chef.jfif', station: 'Grill', date: 'Oct 4, 2024', time: '12:00 PM' }
+    ];
+    const waiters = [
+        { image: staticUrl + 'images/waiter 1.jfif', section: 'Main Hall', date: 'Oct 4, 2024', time: '12:45 PM' },
+        { image: staticUrl + 'images/waiter 2.jfif', section: 'Patio', date: 'Oct 4, 2024', time: '1:00 PM' }
+    ];
 
-let simulationInterval;
-let violations = { tables: {}, chefs: {}, waiters: {} };
+    function populateTables() {
+        // Populate Dirty Tables
+        const dirtyTablesBody = document.querySelector('#dirty-tables tbody');
+        tables.forEach(table => {
+            dirtyTablesBody.innerHTML += `
+                <tr>
+                    <td><img src="${table.image}" alt="Table" class="table-image"></td>
+                    <td>${table.location}</td>
+                    <td>${table.date}</td>
+                    <td>${table.time}</td>
+                </tr>
+            `;
+        });
 
-function startSimulation() {
-    simulationInterval = setInterval(simulateViolation, 3000);
-    document.getElementById('startButton').disabled = true;
-    document.getElementById('stopButton').disabled = false;
-}
+        // Populate Non-Compliant Chefs
+        const nonCompliantChefsBody = document.querySelector('#non-compliant-chefs tbody');
+        chefs.forEach(chef => {
+            nonCompliantChefsBody.innerHTML += `
+                <tr>
+                    <td><img src="${chef.image}" alt="Chef" class="table-image"></td>
+                    <td>${chef.station}</td>
+                    <td>${chef.date}</td>
+                    <td>${chef.time}</td>
+                </tr>
+            `;
+        });
 
-function stopSimulation() {
-    clearInterval(simulationInterval);
-    document.getElementById('startButton').disabled = false;
-    document.getElementById('stopButton').disabled = true;
-}
-
-function simulateViolation() {
-    const violationType = Math.floor(Math.random() * 3);
-    let violation = '';
-
-    switch(violationType) {
-        case 0:
-            violation = simulateTableViolation();
-            break;
-        case 1:
-            violation = simulateChefViolation();
-            break;
-        case 2:
-            violation = simulateWaiterViolation();
-            break;
+        // Populate Non-Compliant Waiters
+        const nonCompliantWaitersBody = document.querySelector('#non-compliant-waiters tbody');
+        waiters.forEach(waiter => {
+            nonCompliantWaitersBody.innerHTML += `
+                <tr>
+                    <td><img src="${waiter.image}" alt="Waiter" class="table-image"></td>
+                    <td>${waiter.section}</td>
+                    <td>${waiter.date}</td>
+                    <td>${waiter.time}</td>
+                </tr>
+            `;
+        });
     }
 
-    if (violation) {
-        logViolation(violation);
-        updateDashboard();
-    }
-}
-
-function simulateTableViolation() {
-    const table = tables[Math.floor(Math.random() * tables.length)];
-    if (Math.random() < 0.3) {
-        violations.tables[table.id] = (violations.tables[table.id] || 0) + 1;
-        return `Table ${table.id} (${table.location}) is dirty`;
-    }
-    return '';
-}
-
-function simulateChefViolation() {
-    const chef = chefs[Math.floor(Math.random() * chefs.length)];
-    if (Math.random() < 0.2) {
-        violations.chefs[chef.id] = (violations.chefs[chef.id] || 0) + 1;
-        return `Chef ${chef.id} (${chef.name}, ${chef.station} station) is not wearing an apron`;
-    } else if (Math.random() < 0.2) {
-        violations.chefs[chef.id] = (violations.chefs[chef.id] || 0) + 1;
-        return `Chef ${chef.id} (${chef.name}, ${chef.station} station) is not wearing a head cap`;
-    }
-    return '';
-}
-
-function simulateWaiterViolation() {
-    const waiter = waiters[Math.floor(Math.random() * waiters.length)];
-    if (Math.random() < 0.2) {
-        violations.waiters[waiter.id] = (violations.waiters[waiter.id] || 0) + 1;
-        return `Waiter ${waiter.id} (${waiter.name}, ${waiter.section}) is not wearing proper uniform`;
-    } else if (Math.random() < 0.2) {
-        violations.waiters[waiter.id] = (violations.waiters[waiter.id] || 0) + 1;
-        return `Waiter ${waiter.id} (${waiter.name}, ${waiter.section}) is not wearing a name tag`;
-    }
-    return '';
-}
-
-function logViolation(violation) {
-    const logElement = document.getElementById('violation-log');
-    const violationElement = document.createElement('div');
-    violationElement.className = 'violation';
-    violationElement.innerHTML = `${new Date().toLocaleTimeString()}: <span class="culprit-info">${violation}</span>`;
-    logElement.insertBefore(violationElement, logElement.firstChild);
-}
-
-function updateDashboard() {
-    const tableStatus = document.getElementById('table-status');
-    const chefStatus = document.getElementById('chef-status');
-    const waiterStatus = document.getElementById('waiter-status');
-
-    const dirtyTables = Object.keys(violations.tables).length;
-    const nonCompliantChefs = Object.keys(violations.chefs).length;
-    const nonCompliantWaiters = Object.keys(violations.waiters).length;
-
-    tableStatus.textContent = dirtyTables > 0 ? `${dirtyTables} table(s) need attention` : 'All tables clean';
-    chefStatus.textContent = nonCompliantChefs > 0 ? `${nonCompliantChefs} chef(s) non-compliant` : 'All chefs compliant';
-    waiterStatus.textContent = nonCompliantWaiters > 0 ? `${nonCompliantWaiters} waiter(s) non-compliant` : 'All waiters compliant';
-}
+    // Populate tables with hardcoded data
+    populateTables();
+});
