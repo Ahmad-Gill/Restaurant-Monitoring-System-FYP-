@@ -12,20 +12,34 @@ from python_code.generate_random_value import generate_random_value
 
 # main page
 def main(request):
-    context={
-        "count":2,
-        "time":"kahdsl",
+    if request.user.is_anonymous:  # Check if the user is not logged in
+        url_ = "/"  # Set URL for non-authenticated users
+        link_text = "Home"
+    context = {
+        "count": 2,
+        "time": "kahdsl",
+        "url_": url_, 
+        "link_text": link_text, 
     }
-    return render(request, "HtmlFiles/main.html",context)
+
+    return render(request, "HtmlFiles/main.html", context)
 
 # Categories Section
 def categories(request):
     if request.user.is_anonymous:
-        return redirect("/login")
-    categories_list = Categories.objects.all()
+        return redirect("/login")  
+    
+    url_ = "/categories/"  
+    link_text = "Categories"
+    
+    categories_list = Categories.objects.all() 
+    context = {
+        'categories': categories_list,
+        'url_': url_,
+        'link_text': link_text, 
+    }
 
-    # Pass the categories to the template
-    return render(request, 'HtmlFiles/categories.html', {'categories': categories_list})
+    return render(request, 'HtmlFiles/categories.html', context)
 # Login / logout
 def login(request):
     if request.method == 'POST':
@@ -53,7 +67,12 @@ def generate_value_view(request):
 
 
 def analytics_review(request):
+    url_ = "/categories/"  
+    link_text = "Categories"
     context = {
+        'url_': url_,
+        'link_text': link_text, 
+         'active_page': 'Visualization',
         "top_dishes": [
             {"name": "Pizza", "count": 3000},
              {"name": "Pizza", "count": 3000},
@@ -103,10 +122,24 @@ def analytics_review(request):
     return render(request, "HtmlFiles/analytics.html", context)
 
 def analytics_tables(request):
-    return render(request, 'HtmlFiles/analytics_tables.html')
+    url_ = "/categories/"  
+    link_text = "Categories"
+    context = {
+        'active_page': 'statistics', 
+        'url_': url_,
+        'link_text': link_text, 
+    }
+    return render(request, 'HtmlFiles/analytics_tables.html',context)
 
 def checks(request):
-    return render(request, "HtmlFiles/check.html")
+    url_ = "/categories/"  
+    link_text = "Categories"
+    context = {
+        'active_page': 'statistics', 
+        'url_': url_,
+        'link_text': link_text, 
+    }
+    return render(request, "HtmlFiles/check.html",context)
 
 def staff_info(request):
     context = {
@@ -123,8 +156,12 @@ def monitoring(request):
 # COstomer Waiting Time for Order 
 
 def customer_waiting_time_for_order(request):
+    url_ = "/categories/"  
+    link_text = "Categories"
     waiting_times = CustomerOrderWaitingTime.objects.all()  # Fetch all records
     context = {
+        'url_': url_,
+        'link_text': link_text, 
         'waiting_times': waiting_times,
         'active_page': 'statistics', 
     }
@@ -132,10 +169,13 @@ def customer_waiting_time_for_order(request):
 def customer_waiting_time_for_order_Visualization(request):
     # Get all waiting times
     waiting_times = CustomerOrderWaitingTime.objects.all()
+    url_ = "/categories/"  
+    link_text = "Categories"
     
     # Calculate individual waiting times
     waiting_time_data = [
         {
+            
             "table_number": time.table_number,
             "waiting_time": (time.end_time - time.start_time).total_seconds() / 60,  # Convert to minutes
             "date": time.end_time.strftime("%Y-%m-%d")                                  # Use end_time for individual entries
@@ -169,6 +209,8 @@ def customer_waiting_time_for_order_Visualization(request):
 
     # Prepare context with both waiting time data and total waiting time data
     context = {
+                'url_': url_,
+        'link_text': link_text,
         'waiting_time_data': waiting_time_data,
         'total_waiting_time_data': total_waiting_time_data,  # Add total waiting time data to context
         'active_page': 'Visualization',

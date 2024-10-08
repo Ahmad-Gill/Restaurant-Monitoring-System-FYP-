@@ -7,8 +7,14 @@
 <!-- Link to external CSS file -->
 <link href="{% static 'CssFiles/check.css' %}" rel="stylesheet">
 <script src="{% static 'JavaScriptFiles/check.js' %}"></script>
+<link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
 
-<h1>Restaurant CCTV Analysis</h1>
+<h2>Restaurant CCTV Analysis</h2>
+
+<div class="page-slider">
+    <h2> <a href="{% url 'checks' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
+    <h2> <a href="#" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+ </div>
 
 <div class="table-container">
     <div class="table-wrapper">

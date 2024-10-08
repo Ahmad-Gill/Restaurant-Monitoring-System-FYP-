@@ -7,13 +7,20 @@
 {% block body %}
 
 <link href="{% static 'CssFiles/analytics.css' %}" rel="stylesheet">
+<link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
 <!-- New navigation links below the title -->
+
+
+<h2>General Analytics Report</h2>
+
+
+<div class="page-slider">
+    <h2> <a href="{% url 'analytics_table' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
+    <h2> <a href="{% url 'analytics' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+ </div>
+
 <div class="dashboard-container">
-    <h3 class="dashboard-title">Restaurant Analytics Dashboard</h3>
-    <div class="navigation-links">
-        <a href="{% url 'analytics' %}">Visuals</a>
-        <a href="{% url 'analytics_table' %}">Table</a>
-    </div>
+
     <div class="dashboard-grid">
         <div class="dashboard-card">
             <h4>Most Ordered Dishes</h4>
