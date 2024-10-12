@@ -12,9 +12,8 @@ from python_code.generate_random_value import generate_random_value
 
 # main page
 def main(request):
-    if request.user.is_anonymous:  # Check if the user is not logged in
-        url_ = "/"  # Set URL for non-authenticated users
-        link_text = "Home"
+    url_ = "/"  # Set URL for non-authenticated users
+    link_text = "Home"
     context = {
         "count": 2,
         "time": "kahdsl",
