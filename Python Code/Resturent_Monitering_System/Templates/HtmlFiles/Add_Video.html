@@ -1,0 +1,70 @@
+{% extends "HtmlFiles/Base.html" %}
+
+{% block title %}Select Videos{% endblock %}
+{% block home_active %}active{% endblock home_active %}
+
+{% load static %}
+{% block body %}
+<link href="{% static 'CssFiles/Add_Video.css' %}" rel="stylesheet">
+<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
+
+<div class="container_">
+    <h1 class="page-title">Select Videos</h1>
+    <p class="page-subtitle">Upload the entire day’s video for further processing.</p>
+
+    <!-- Form for uploading videos -->
+    <form method="POST" enctype="multipart/form-data" id="video-upload-form" class="video-upload-form">
+        {% csrf_token %}
+        
+        <!-- Custom file input button -->
+        <label for="videoInput" class="custom-file-input">
+            <span class="file-input-text">Choose Videos</span>
+        </label>
+        <input 
+            type="file" 
+            name="videos" 
+            id="videoInput" 
+            accept="video/*,.dav" 
+            class="file-input" 
+            multiple 
+            hidden 
+            onchange="showVideoPreview(event)"
+        >
+
+        <!-- Hidden submit button -->
+        <button type="submit" class="submit-btn" style="display: none;">Upload Videos</button>
+    </form>
+
+    {% if is_uploaded %}
+    <div class="uploaded-videos-section">
+        <h2 class="section-title">Selected Videos</h2>
+        <ul class="video-list">
+            {% for url in video_urls %}
+                <li class="video-item">{{ url }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Next button -->
+        <a href="{% url 'preprocessing' %}" class="next-btn-container">
+            <button id="next-btn" class="next-btn">Click Next to Continue</button>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Upload Status Message -->
+    <div id="upload-status" class="upload-status-message"></div>
+</div>
+
+<!-- Full-Screen Overlay with Lottie Animation -->
+<div id="overlay" class="overlay">
+    <div id="lottie-animation" 
+         data-animation-path="{% static 'Animation/Animation1.json' %}" 
+         style="width: 50vw; height: auto; margin: 0 auto;">
+    </div>
+</div>
+
+<!-- Include Lottie JS from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.4/lottie.min.js"></script>
+<script src="{% static 'JavaScriptFiles/Add_Video.js' %}"></script>
+
+{% endblock %}

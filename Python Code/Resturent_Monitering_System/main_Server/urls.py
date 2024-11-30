@@ -23,9 +23,11 @@ urlpatterns = [
        path('waiting-time-for-order/', views.customer_waiting_time_for_order, name='waiting_time_for_order'),
        path('waiting-time-for-order_Visualization/', views.customer_waiting_time_for_order_Visualization, name='waiting_time_for_order_Visualization'),  
 
-
+  path('select-video/', views.select_video, name='select_video'),  # URL for the Select Video page
      # Sample PY file 
   path('generate-value/', generate_value_view, name='generate_value'),
+   path('preprocessing/', views.preprocessing, name='preprocessing'),
+    path('preprocessing_1', views.preprocessing_1, name='preprocessing_1'),  # Map the URL to your view
 ]
 
 
