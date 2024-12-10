@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.urls import reverse
+import base64
 
 # Importing models for database interactions
 from .models import GeneratedValue, Categories, CustomerOrderWaitingTime
@@ -303,7 +304,19 @@ def preprocessing_1(request):
 
     return render(request, 'HtmlFiles/preprocessing_1.html', {'error': 'Invalid request method', "url_": url_, "link_text": link_text})
 
+def preprocessing_2(request):
+    # Example URL and link text for navigation
+    url_ = "/categories/"
+    link_text = "Categories"
 
+    # Context passed to the template
+    context = {
+        'title': 'Preprocessing Completed - Congratulations!',
+        'preprocessing': True,
+        'url_': url_,
+        'link_text': link_text,
+    }
+    return render(request, 'HtmlFiles/preprocessing_2.html', context)
 
 
 

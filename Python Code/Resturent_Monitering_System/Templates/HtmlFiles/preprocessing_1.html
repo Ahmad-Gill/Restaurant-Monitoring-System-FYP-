@@ -9,22 +9,26 @@
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
 
 <div class="container_">
-    <h1>Aj k lia BAs Aitna heeee</h1>
-    <h3>Selected Grids</h3>
+    <h1>Final Step of Preprocessing</h1>
+
+    <p>It will take a minimum of 12 hours, so be patient and <strong>do not turn off the computer</strong>.</p>
+
 
     {% if grids %}
+    <div class="button-container">
+        <a href="{% url 'preprocessing_2' %}">
+            <button class="submit-btn">Start Preprocessing</button>
+        </a>
+    </div>
+    
 
-    <ul>
-        {% for grid in grids %}
-            <p>{{ grid }}</p>
-        {% endfor %}
-    </ul>
-{% elif error %}
-    <h2>Error: {{ error }}</h2>
-{% else %}
-    <h2>No data received.</h2>
-{% endif %}
+    {% elif error %}
+        <h2>Error: {{ error }}</h2>
+    {% else %}
+        <h2>No data received.</h2>
+    {% endif %}
+
+    <!-- Add a button linking to preprocessing_2 -->
 </div>
-
 
 {% endblock %}
