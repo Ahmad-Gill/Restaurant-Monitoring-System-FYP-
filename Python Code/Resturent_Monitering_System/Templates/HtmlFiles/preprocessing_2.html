@@ -10,22 +10,31 @@
 
 <div class="container_">
     <h1>Final Step of Preprocessing</h1>
-
     <h3>It will take a minimum of 12 hours, so be patient and <strong>do not turn off the computer</strong>.</h3>
 
-    
+    <div class="button-container">
+        {% if not preprocessing %}
+            <button id="start-preprocessing" class="submit-btn">Start Preprocessing</button>
+        {% endif %}
+    </div>
+
     {% if preprocessing %}
         <p>Congratulations! The preprocessing has been successfully completed.</p>
         <div class="button-container">
-            <!-- Corrected the URL structure for the button -->
             <a href="{% url 'categories' %}">
                 <button class="submit-btn">Exit Preprocessing</button>
             </a>
         </div>
     {% else %}
-        <p>Preprocessing has not been completed yet. Please wait.</p>
+        <div id="overlay" class="overlay" style="display: none;">
+            <div class="overlay-message">
+                Preprocessing is in progress. Please wait...
+            </div>
+        </div>
     {% endif %}
-
 </div>
+
+<!-- Include your custom JavaScript file -->
+<script src="{% static 'JavaScriptFiles/preprocessing2.js' %}"></script>
 
 {% endblock %}
