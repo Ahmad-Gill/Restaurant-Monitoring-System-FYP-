@@ -3,7 +3,8 @@
     --danger-color: #e74c3c;     /* Danger */
     --headings: #ffffff;         /* For headings like h1, h2 */
     --hover: #4A3A6A;            /* Hover color */
-    --background: rgba(0, 0, 0, 0.8); /* Background color */
+    --background: black;
+
 
 
     --font-size-small: 16px;     /* Small font size */

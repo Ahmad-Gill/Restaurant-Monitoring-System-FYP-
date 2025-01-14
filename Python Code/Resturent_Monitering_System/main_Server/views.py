@@ -10,6 +10,8 @@ from django.db.models import ExpressionWrapper
 from django.db.models import F
 from django.db.models import DurationField
 from django.db.models import Sum
+from django.http import StreamingHttpResponse
+import time
 
 
 
@@ -166,79 +168,6 @@ def extract_date_from_video_path(video_path):
         return match.group(1)
     return "unknown_date"
 
-
-def apply_grids(frame, grid_size=(20, 20)):
-    h, w = frame.shape[:2]
-    cell_h, cell_w = h // grid_size[0], w // grid_size[1]
-    
-    for row in range(grid_size[0]):
-        for col in range(grid_size[1]):
-            tl_x, tl_y = col * cell_w, row * cell_h
-            br_x, br_y = tl_x + cell_w, tl_y + cell_h
-            cv2.rectangle(frame, (tl_x, tl_y), (br_x, br_y), (255, 0, 0), 2)
-            grid_num = row * grid_size[1] + col + 1
-            cv2.putText(frame, f'Grid {grid_num}', (tl_x + 5, tl_y + 30),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
-    
-    return frame
-
-def display_frame_with_grids(video_path, grid_size=(20, 20)):
-    if not os.path.isfile(video_path):
-        print(f"Error: {video_path} not found.")
-        return None
-
-    cap = cv2.VideoCapture(video_path)
-    if not cap.isOpened():
-        print(f"Failed to open video: {video_path}")
-        return None
-
-    ret, frame = cap.read()
-    if not ret:
-        print("Failed to read the first frame.")
-        return None
-
-    frame_with_grids = apply_grids(frame, grid_size)
-    output_path = os.path.join(os.getcwd(), 'output_frame_with_grids.png')
-    try:
-        cv2.imwrite(output_path, frame_with_grids)
-        print(f"Frame saved at: {output_path}")
-        cap.release()
-        return output_path
-    except Exception as e:
-        print(f"Error saving the frame: {e}")
-        return None
-
-def get_first_video(folder_path, valid_extensions=(".dav", ".mp4", ".avi", ".mkv")):
-    files = [f for f in os.listdir(folder_path) if f.endswith(valid_extensions)]
-    if not files:
-        print("No video files found in the folder.")
-        return None
-    first_video = sorted(files)[0]
-    return os.path.join(folder_path, first_video)
-
-def get_video_paths_by_time(raw_folder_path):
-    video_files = [f for f in os.listdir(raw_folder_path) if f.endswith(('.mp4', '.avi', '.mkv', '.dav'))]
-    pattern = re.compile(r"_(\d{8})(\d{6})_")
-
-    videos_with_time = [
-        (match.group(2), os.path.join(raw_folder_path, f))
-        for f in video_files if (match := pattern.search(f))
-    ]
-
-    if not videos_with_time:
-        return {}, None
-
-    videos_with_time.sort(key=lambda x: x[0])
-    video_dict = {i + 1: path for i, (_, path) in enumerate(videos_with_time)}
-
-    first_date = pattern.search(video_files[0]).group(1)
-    formatted_date = f"{first_date[6:8]}_{first_date[4:6]}_{first_date[0:4]}"
-
-    json_filename = f"{formatted_date}_dictionary.json"
-    with open(json_filename, "w") as file:
-        json.dump(video_dict, file, indent=4)
-
-    return video_dict, formatted_date
 def process_all_videos_and_save_frames(video_paths):
     all_selected_frames = []
 
@@ -330,6 +259,78 @@ def process_all_videos_and_save_frames(video_paths):
 
     print(f"Frames saved successfully in folder: {output_folder}")
     return output_folder
+def apply_grids(frame, grid_size=(20, 20)):
+    h, w = frame.shape[:2]
+    cell_h, cell_w = h // grid_size[0], w // grid_size[1]
+    
+    for row in range(grid_size[0]):
+        for col in range(grid_size[1]):
+            tl_x, tl_y = col * cell_w, row * cell_h
+            br_x, br_y = tl_x + cell_w, tl_y + cell_h
+            cv2.rectangle(frame, (tl_x, tl_y), (br_x, br_y), (255, 0, 0), 2)
+            grid_num = row * grid_size[1] + col + 1
+            cv2.putText(frame, f'Grid {grid_num}', (tl_x + 5, tl_y + 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
+    
+    return frame
+
+def display_frame_with_grids(video_path, grid_size=(20, 20)):
+    if not os.path.isfile(video_path):
+        print(f"Error: {video_path} not found.")
+        return None
+
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print(f"Failed to open video: {video_path}")
+        return None
+
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to read the first frame.")
+        return None
+
+    frame_with_grids = apply_grids(frame, grid_size)
+    output_path = os.path.join(os.getcwd(), 'output_frame_with_grids.png')
+    try:
+        cv2.imwrite(output_path, frame_with_grids)
+        print(f"Frame saved at: {output_path}")
+        cap.release()
+        return output_path
+    except Exception as e:
+        print(f"Error saving the frame: {e}")
+        return None
+
+def get_first_video(folder_path, valid_extensions=(".dav", ".mp4", ".avi", ".mkv")):
+    files = [f for f in os.listdir(folder_path) if f.endswith(valid_extensions)]
+    if not files:
+        print("No video files found in the folder.")
+        return None
+    first_video = sorted(files)[0]
+    return os.path.join(folder_path, first_video)
+
+def get_video_paths_by_time(raw_folder_path):
+    video_files = [f for f in os.listdir(raw_folder_path) if f.endswith(('.mp4', '.avi', '.mkv', '.dav'))]
+    pattern = re.compile(r"_(\d{8})(\d{6})_")
+
+    videos_with_time = [
+        (match.group(2), os.path.join(raw_folder_path, f))
+        for f in video_files if (match := pattern.search(f))
+    ]
+
+    if not videos_with_time:
+        return {}, None
+
+    videos_with_time.sort(key=lambda x: x[0])
+    video_dict = {i + 1: path for i, (_, path) in enumerate(videos_with_time)}
+
+    first_date = pattern.search(video_files[0]).group(1)
+    formatted_date = f"{first_date[6:8]}_{first_date[4:6]}_{first_date[0:4]}"
+
+    json_filename = f"{formatted_date}_dictionary.json"
+    with open(json_filename, "w") as file:
+        json.dump(video_dict, file, indent=4)
+
+    return video_dict, formatted_date
 
 
 # **************************************************************
@@ -391,7 +392,24 @@ def categories(request):
     }
 
     return render(request, 'HtmlFiles/categories.html', context)
+def cheff_and_people(request):
+       
+    url_ = "/categories/"  
+    link_text = "Categories"
+    context = {
+        'url_': url_,
+        'link_text': link_text, 
+    }
 
+    return render(request, 'HtmlFiles/Cheff&people.html',context)
+def chef_preprocessing(request):
+    url_ = "/categories/"  
+    link_text = "Categories"
+    context = {
+        'url_': url_,
+        'link_text': link_text, 
+    }
+    return render(request, 'HtmlFiles/chef_preprocessing.html')
 
 # Select Vidoes 
 
@@ -561,6 +579,15 @@ def preprocessing_2(request):
         'link_text': link_text,
     }
     return render(request, 'HtmlFiles/preprocessing_2.html', context)
+def start_preprocessing(request):
+    if request.method == "POST":
+        # Trigger preprocessing here
+        preprocessing = True
+        # Perform your logic here (e.g., calling the preprocessing_2 logic)
+        preprocessing_2(request)  # Ensure this logic updates the context properly
+
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
 def analytics_review(request):
     url_ = "/categories/"  
     link_text = "Categories"
@@ -569,14 +596,14 @@ def analytics_review(request):
         'link_text': link_text, 
          'active_page': 'Visualization',
         "top_dishes": [
-            {"name": "Pizza", "count": 3000},
-             {"name": "Pizza", "count": 3000},
-              {"name": "Piza", "count": 3000},
-               {"name": "Pia", "count": 3000},
-                {"name": "Pizza", "count": 3000},
-                 {"name": "Pizza", "count": 3000},
-                  {"name": "Pizza", "count": 3000},
-                   {"name": "Pizza", "count": 3000},
+            {"name": "Pizza", "count": 300},
+             {"name": "Pizza", "count": 300},
+              {"name": "Piza", "count": 300},
+               {"name": "Pia", "count": 300},
+                {"name": "Pizza", "count": 300},
+                 {"name": "Pizza", "count": 300},
+                  {"name": "Pizza", "count": 300},
+                   {"name": "Pizza", "count": 300},
 
             {"name": "Burger", "count": 250},
             {"name": "Pasta", "count": 200},

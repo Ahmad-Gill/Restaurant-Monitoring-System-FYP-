@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Categories
     path('categories/', views.categories, name='categories'),
+     path('cheff-and-people/', views.cheff_and_people, name='cheff_and_people'),
 
     #Auth
      path('login/', views.login, name='login'),
@@ -23,11 +24,15 @@ urlpatterns = [
        path('waiting-time-for-order/', views.customer_waiting_time_for_order, name='waiting_time_for_order'),
        path('waiting-time-for-order_Visualization/', views.customer_waiting_time_for_order_Visualization, name='waiting_time_for_order_Visualization'),  
 
-  path('select-video/', views.select_video, name='select_video'),  # URL for the Select Video page
+  path('select-video/', views.select_video, name='select_video'),  
+    path('preprocessing_2/', views.preprocessing_2, name='preprocessing_2'),
+
+   path('chef-preprocessing/', views.chef_preprocessing, name='chef_preprocessing'),# URL for the Select Video page
+   path('start_preprocessing/', views.start_preprocessing, name='start_preprocessing'),
      # Sample PY file 
    path('preprocessing/', views.preprocessing, name='preprocessing'),
     path('preprocessing_1', views.preprocessing_1, name='preprocessing_1'),  # Map the URL to your view
-    path('preprocessing_2/', views.preprocessing_2, name='preprocessing_2'),
+   
 ]
 
 

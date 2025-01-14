@@ -1,0 +1,209 @@
+/* General Styles */
+body {
+    height: 100%; /* Full height of the page */
+    margin: 0; /* Remove default margin */
+    display: flex; /* Flexbox for centering */
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    box-sizing: border-box; /* Include padding/borders in dimensions */
+}
+
+/* Main Container */
+.cotn_principal {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    width: 100%; /* Full width of viewport */
+    height: 100vh; /* Full height of viewport */
+    margin: -10px 0 0 0; /* Add top margin (adjust as needed) */
+    padding: 0; /* No padding to ensure alignment */
+    box-sizing: border-box;
+}
+
+
+/* Centering the main container content */
+.cont_centrar {
+    width: 100%;
+    text-align: center;
+}
+
+/* Main Container Dimensions */
+/* Main Container */
+.main_container {
+    display: flex;
+    justify-content: space-between; /* Divide left and right sections */
+    align-items: center; /* Center-align contents vertically */
+    width: 1000px; /* Fixed width */
+    height: 500px; /* Fixed height */
+    background-color: black; /* Background color for the container */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+    border-radius: 12px; /* Rounded corners */
+    padding: 20px;
+    box-sizing: border-box; /* Include padding and borders in the box dimensions */
+    margin: 0; /* Ensure no margins */
+}
+
+/* Left Section (Text and Buttons) */
+.left_section {
+      background: #e5c0d5; /* Darker shade of #f8d9e4 */
+    padding: 20px;
+    font-size: 18px;
+    color: black;
+    width: 50%; /* Occupies 50% of the container width */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px; /* Rounded corners */
+    height: 72vh;
+  
+    position: relative;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
+
+    /* Ensure alignment from top-left */
+    margin: 0; /* Remove margin to align with container */
+    padding: 0; /* Remove unnecessary padding to align flush */
+}
+
+
+
+/* Pseudo-element for top-right corner decoration */
+.left_section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px; /* Adjust size for desired effect */
+    height: 100px; /* Adjust size for desired effect */
+    background-color: black; /* Background color */
+    clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 0); /* Adjust clip-path for rounded effect */
+    border-radius: 50%; /* Rounded corners */
+    z-index: 1;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Paragraph Text (for additional text) */
+
+
+
+/* Right Section (Items) */
+.right_section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Aligns items to the right end horizontally */
+    justify-content: flex-end; /* Aligns content to the bottom vertically */
+    width: 45%; /* Occupies 45% of the container width */
+    margin-left: 60px; /* Adds margin to the right */
+    margin-bottom: -10px; /* Adds margin to the bottom */
+}
+
+
+
+/* Grid Item Styling */
+.grid_item {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    color: #fff;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    outline: none;
+    display: inline-block; /* Makes the button inline */
+    text-align: center; /* Centers text inside the button */
+    margin: 0px auto; /* Center the button horizontally */
+    width: auto; /* Adjust width based on content */
+    margin-top: 70px; /* Adds margin to the bottom */
+
+}
+.grid_item:hover {
+    transform: scale(1.1);
+    background-color: var(--hover);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Links Inside Grid Items */
+.grid_item h1 {
+    color: #e5c0d5;
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Button Styles */
+.cartoon_button {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    color: #fff;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Button Hover Effect */
+.cartoon_button:hover {
+    transform: scale(1.1);
+    background-color: var(--hover);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Button Active Effect */
+.cartoon_button:active {
+    transform: scale(0.95);
+    box-shadow: none;
+    animation: bounce 0.5s ease forwards;
+}
+
+/* Login Button Style */
+.btn_login {
+    background-color: var(--primary-color); /* Yellowish color */
+}
+
+/* Sign Up Button Style */
+.btn_sign_up {
+    background-color: var(--primary-color); /* Greenish color */
+}
+
+/* Keyframes for Animation */
+@keyframes bounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+#leftTextContent {
+    text-align: left; /* Align text to the right */
+}
+#leftTextContent {
+    text-align: left; /* Align text to the left */
+    margin-top: 20px; /* Margin at the top */
+    margin-right: 1px; /* Margin on the right */
+    margin-bottom: 20px; /* Margin at the bottom */
+    margin-left: 32px; /* Margin on the left */
+}
+
+#preprocessing-heading {
+    color: #e5c0d5; /* Your desired color */
+}
+
+.analytics-text {
+   
+
+    margin-left: 65px; /* Adjust the margin from left */
+}
