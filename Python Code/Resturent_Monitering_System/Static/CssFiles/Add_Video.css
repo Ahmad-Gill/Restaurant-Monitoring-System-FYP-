@@ -342,57 +342,92 @@ combine submit and get grids buttion */
 }
 
 
+#loading-message-container {
+    height: 200px; /* Fixed height */
+    width: 100%;  /* Full width */
+    max-width: 1000px; /* Optional: Set a maximum width */
+    overflow-y: scroll; /* Allows scrolling when content exceeds the height */
+    background-color: black; /* Set the background to black */
+    color: white; /* Set text color to white for contrast */
+    border: 1px solid black; /* Optional: Add border for visual separation */
+    padding: 10px; /* Optional: Padding inside the scrollable div */
+    margin: 0 auto; /* Center horizontally */
+    position: absolute; /* Positioning the element */
+    top: 70%; /* Position from the top */
+    left: 50%; /* Position from the left */
+    transform: translate(-50%, -50%); /* Centering it perfectly */
+    
+    /* Custom Scrollbar Styling */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #555 #000; /* Firefox: thumb color, track color */
+}
 
-/* Overlay style */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+#loading-message-container::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+}
+
+#loading-message-container::-webkit-scrollbar-thumb {
+    background-color: #555; /* Thumb color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+#loading-message-container::-webkit-scrollbar-track {
+    background-color: black; /* Track color */
+}
+
+#loading-message {
+    font-size: 16px; /* Adjust text size as needed */
+}
+
+
+.next-btn-container {
+    text-decoration: none;  /* Remove underline */
+    color: inherit;  /* Optional: removes any default link color */
+}
+
+.next-btn-container:focus,
+.next-btn-container:hover,
+.next-btn-container:active {
+    text-decoration: none;  /* Remove underline on hover, focus, and active states */
+}
+
+
+
+
+
+
+
+/*Extracted Framework----------------------------------------------------------------*/
+/* Style for the extracted frame section */
+.frame-section {
+    text-align: center;
+    margin: 20px auto;
+    background-color: #000; /* Black background for the section */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 70%; /* Make sure the container's width doesn't exceed 70% of the screen */
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Dark transparent background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensures no overflow occurs */
 }
 
-/* Spinner animation */
-.overlay::after {
-    content: "";
-    display: block;
-    width: 60px;
-    height: 60px;
-    border: 6px solid transparent;
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+.frame-section h3 {
+    font-size: 24px;
+    color: #fff; /* White text for the header */
+    margin-bottom: 15px;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+.frame-section img {
+    width: 100%; /* The image will take up the full width of its container */
+    height: auto;
+    max-width: 100%; /* Prevents image from exceeding container */
+    border: 3px solid #fff; /* White border for the image */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Darker shadow for better contrast */
 }
 
-/* Button styles */
-.submit-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
+.frame-section p {
+    font-size: 18px;
+    color: #f44336;
+    margin-top: 15px;
 }
-
-.submit-btn:hover {
-    background-color: #45a049;
-}
-
-
-
-

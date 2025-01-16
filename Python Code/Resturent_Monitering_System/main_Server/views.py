@@ -12,7 +12,7 @@ from django.db.models import DurationField
 from django.db.models import Sum
 from django.http import StreamingHttpResponse
 import time
-
+from .forms import ContactForm
 
 
 # Importing models for database interactions
@@ -45,6 +45,7 @@ import shutil
 
 # Subprocess module for running system commands if required
 import subprocess
+from django.core.mail import send_mail
 
 
 
@@ -365,16 +366,45 @@ def logoutUser(request):
 
 # main page
 def main(request):
-    url_ = "/"  
-    link_text = "Home"
-    context = {
-        "count": 2,
-        "time": "kahdsl",
-        "url_": url_, 
-        "link_text": link_text, 
-    }
+    success = False
+    error = False
 
-    return render(request, "HtmlFiles/main.html", context)
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            subject = form.cleaned_data["subject"]
+            message = form.cleaned_data["message"]
+            
+            # Send email logic
+            try:
+                send_mail(
+                    subject,  # Subject of the email
+                    message,  # Message content
+                    email,    # From email (sender)
+                    ['recipient@example.com'],  # To email(s)
+                    fail_silently=False,
+                )
+                success = True  # Successfully sent the email
+            except Exception as e:
+                error = True  # If there's an error
+        else:
+            error = True  # If the form is invalid
+    else:
+        form = ContactForm()
+
+    # Context to render in main.html
+    context = {
+        'form': form,
+        'success': success,
+        'error': error,
+        "count": 2,  # Include your custom context variables
+        "time": "kahdsl",
+        "url_": "/", 
+        "link_text": "Home",
+    }
+    return render(request, 'HtmlFiles/main.html', context)
 
 # Categories Section
 def categories(request):
@@ -403,14 +433,135 @@ def cheff_and_people(request):
 
     return render(request, 'HtmlFiles/Cheff&people.html',context)
 def chef_preprocessing(request):
-    url_ = "/categories/"  
+    url_ = "/categories/"
     link_text = "Categories"
+    
+    # Path to the chef_videos directory and the video_paths.txt file
+    chef_videos_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'chef_videos')
+    video_paths_file = os.path.join(chef_videos_path, 'video_paths.txt')
+
+    if request.method == "POST" and request.FILES.get('Kitchenvideos'):
+        video_files = request.FILES.getlist('Kitchenvideos')
+        
+        # Step 1: Remove existing videos and the video paths file
+        if os.path.exists(chef_videos_path):
+            # Delete all files in the directory
+            for f in os.listdir(chef_videos_path):
+                file_path = os.path.join(chef_videos_path, f)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+        
+        # Optionally, clear the video_paths.txt file
+        if os.path.exists(video_paths_file):
+            os.remove(video_paths_file)
+
+        # Recreate the directory if it doesn't exist
+        os.makedirs(chef_videos_path, exist_ok=True)
+
+        video_urls = []
+        for video_file in video_files:
+            # Save the video file in the new folder
+            fs = FileSystemStorage(location=chef_videos_path)
+            filename = fs.save(video_file.name, video_file)
+            video_url = fs.url(filename)  # Get the URL of the saved video file
+            video_urls.append(video_url)
+
+            # Step 2: Store the video paths in the text file
+            with open(video_paths_file, 'a') as file:
+                file.write(f"{video_url}\n")
+
+            # Optionally, store the video info in the database
+            # Video.objects.create(video_file=video_url)
+
+        # Pass the video URLs to the template
+        context = {
+            'url_': url_,
+            'link_text': link_text,
+            'is_uploaded': True,
+            'video_urls': video_urls
+        }
+    else:
+        context = {
+            'url_': url_,
+            'link_text': link_text,
+            'is_uploaded': False
+        }
+
+    return render(request, 'HtmlFiles/chef_preprocessing.html', context)
+def extract_frame(video_path, output_image_path):
+    # Open the video file using OpenCV
+    video_capture = cv2.VideoCapture(video_path)
+    
+    if not video_capture.isOpened():
+        print(f"Error: Could not open video file at {video_path}")
+        return False
+    
+    # Read the first frame
+    success, frame = video_capture.read()
+    
+    if success:
+        # Save the frame as an image (JPEG format)
+        cv2.imwrite(output_image_path, frame)
+        video_capture.release()
+        return True
+    else:
+        print(f"Error: Could not read the first frame from {video_path}")
+        video_capture.release()
+        return False
+
+def final_chef_preprocessing1(request):
+    url_ = "/categories/"
+    link_text = "Categories"
+
+    # Path to the chef_videos folder inside media
+    chef_videos_folder = os.path.join(settings.MEDIA_ROOT, 'videos', 'chef_videos')
+
+    # Get a list of all video files in the folder (skip directories)
+    valid_video_extensions = ['.mp4', '.avi', '.mov', '.dav']  # You can add more video extensions here
+    video_files = [f for f in os.listdir(chef_videos_folder)
+                   if os.path.isfile(os.path.join(chef_videos_folder, f)) and 
+                   any(f.lower().endswith(ext) for ext in valid_video_extensions)]
+
+    if not video_files:
+        print("No valid video files found in the folder.")
+        frame_image = None
+    else:
+        # Take the first valid video file found
+        video_filename = video_files[0]
+        video_path = os.path.join(chef_videos_folder, video_filename)
+        
+        # Create a folder to store the extracted frame
+        frame_folder = os.path.join(settings.MEDIA_ROOT, 'frames')
+        os.makedirs(frame_folder, exist_ok=True)
+        
+        # Path to save the extracted frame
+        frame_image_path = os.path.join(frame_folder, 'extracted_frame.jpg')
+        
+        # Extract the first frame from the chosen video
+        if extract_frame(video_path, frame_image_path):
+            # Construct the URL of the extracted frame
+            frame_image = f"/media/frames/{os.path.basename(frame_image_path)}"
+        else:
+            frame_image = None
+
     context = {
         'url_': url_,
-        'link_text': link_text, 
+        'link_text': link_text,
+        'frame_image': frame_image,  # Pass the frame image URL to the template
     }
-    return render(request, 'HtmlFiles/chef_preprocessing.html')
-
+    
+    return render(request, 'HtmlFiles/finalCheffPreprocessing1.html', context)
+def final_chef_preprocessing2(request):
+    url_ = "/categories/"
+    link_text = "Categories"
+    context = {
+            'url_': url_,
+            'link_text': link_text,
+            'is_uploaded': False
+        }
+    # Any logic for the second preprocessing step can be added here.
+    # For now, just render a simple template for demonstration.
+    return render(request, 'HtmlFiles/finalCheffPreprocessing2.html',context )
 # Select Vidoes 
 
 def select_video(request):

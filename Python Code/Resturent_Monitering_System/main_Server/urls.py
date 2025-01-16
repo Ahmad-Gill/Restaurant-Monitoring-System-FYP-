@@ -15,6 +15,11 @@ urlpatterns = [
     # Categories
     path('categories/', views.categories, name='categories'),
      path('cheff-and-people/', views.cheff_and_people, name='cheff_and_people'),
+      path('final_chef_preprocessing/', views.final_chef_preprocessing1, name='final_chef_preprocessing1'),
+       path('final_chef_preprocessing2/', views.final_chef_preprocessing2, name='final_chef_preprocessing2'),
+
+      
+
 
     #Auth
      path('login/', views.login, name='login'),

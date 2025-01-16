@@ -1,0 +1,35 @@
+{% extends "HtmlFiles/Base.html" %}
+
+{% block title %}Final Chef Preprocessing{% endblock %}
+{% block home_active %}active{% endblock home_active %}
+
+{% load static %}
+{% block body %}
+<link href="{% static 'CssFiles/Add_Video.css' %}" rel="stylesheet">
+<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
+
+<div class="container_">
+    <h1 class="page-title">Final Chef Preprocessing</h1>
+    <p class="page-subtitle">This is the final step of chef preprocessing. Review and confirm the processed video.</p>
+
+    {% if frame_image %}
+    <div class="frame-section">
+        <h3>Extracted Frame:</h3>
+        <img src="{{ frame_image }}" alt="Extracted Frame">
+    </div>
+{% else %}
+    <div class="frame-section">
+        <p>No frame could be extracted.</p>
+    </div>
+{% endif %}
+
+
+    <div class="action-buttons">
+
+        <a href="{% url 'final_chef_preprocessing2' %}" class="next-btn-container">
+            <button id="start-btn" class="next-btn">Start Preprocessing</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

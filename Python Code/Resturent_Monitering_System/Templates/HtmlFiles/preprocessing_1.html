@@ -13,22 +13,24 @@
 
     <p>It will take a minimum of 12 hours, so be patient and <strong>do not turn off the computer</strong>.</p>
 
+    <div id="loading-message-container" style="display: none;">
+        <div id="loading-message"></div>
+    </div>
 
     {% if grids %}
     <div class="button-container">
         <a href="{% url 'preprocessing_2' %}">
-            <button class="submit-btn">Start Preprocessing</button>
+            <button class="submit-btn" id="start-button" onclick="startPreprocessing()">Start Preprocessing</button>
         </a>
     </div>
     
-
     {% elif error %}
         <h2>Error: {{ error }}</h2>
     {% else %}
         <h2>No data received.</h2>
     {% endif %}
-
-    <!-- Add a button linking to preprocessing_2 -->
 </div>
+
+<script src="{% static 'JavaScriptFiles/preprocessing1.js' %}"></script>
 
 {% endblock %}

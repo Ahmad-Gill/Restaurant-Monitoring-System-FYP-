@@ -9,7 +9,7 @@
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
 
 <div class="container_">
-    <h1 class="page-title">Select Videos</h1>
+    <h1 class="page-title">Select Analytics Videos</h1>
     <p class="page-subtitle">Upload the entire day’s video for further processing.</p>
 
     <!-- Form for uploading videos -->
@@ -37,7 +37,7 @@
 
     {% if is_uploaded %}
     <div class="uploaded-videos-section">
-        <h2 class="section-title">Selected Videos</h2>
+        <h2 class="section-title">Selected  Videos</h2>
         <ul class="video-list">
             {% for url in video_urls %}
                 <li class="video-item">{{ url }}</li>
