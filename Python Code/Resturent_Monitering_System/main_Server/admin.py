@@ -1,6 +1,7 @@
 from django.contrib import admin
 import markupsafe
-from .models import CustomerOrderWaitingTime, CustomerOrderServingTime
+from .models import CustomerOrderWaitingTime, CustomerOrderServingTime,Visitor,CustomerOrderSummary
+
 
 # Register your models here.
 from .models import GeneratedValue,Categories   # Adjust the import based on your model's location
@@ -28,3 +29,5 @@ class GeneratedValueAdmin(admin.ModelAdmin):
     admin.site.register(Categories) 
     admin.site.register(CustomerOrderWaitingTime)
     admin.site.register(CustomerOrderServingTime)
+    admin.site.register(Visitor)
+    admin.site.register(CustomerOrderSummary)

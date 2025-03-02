@@ -1,5 +1,6 @@
 {% extends "HtmlFiles/Base.html" %}
 {% block title %}Main Page{% endblock title %}
+{% load tz %}
 
 {% load static %}
 
@@ -7,6 +8,10 @@
 
 {% block body %}
 {% load static %}
+<link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
+<script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order.js' %}"></script>
+<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
+<link href="{% static 'CssFiles/main.css' %}" rel="stylesheet">
 
 
 
@@ -101,6 +106,30 @@
 
 
 
+{% comment %} <div class="containerr">
+    <h2>Visitors List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Visitor IP</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for visitor in visitors %}
+                <tr>
+                    <td>{{ visitor.name }}</td>
+                    <td>{{ visitor.count }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No visitors recorded yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+ {% endcomment %}
 
 
 {% comment %} -------------------------------------Services----------------------------------------- {% endcomment %}

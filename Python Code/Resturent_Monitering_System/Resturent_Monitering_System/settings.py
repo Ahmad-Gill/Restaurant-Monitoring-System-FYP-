@@ -15,6 +15,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+ASGI_APPLICATION = "Resturent_Monitering_System.asgi.application"
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-59s8w$4-ms)1!g0%_h+&x(rb8(tv*y(o%7=0g5y-9@2*1j%79e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["resturent-monitering-system.onrender.com", "0.0.0.0", "localhost","127.0.0.1"]
 
 
 # Application definition
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+     'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -111,11 +113,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+
 
 USE_I18N = True
 
-USE_TZ = True
+TIME_ZONE = 'Asia/Karachi'  # Set the time zone to Pakistan Standard Time (PKT)
+USE_TZ = True  
 
 
 # Static files (CSS, JavaScript, Images)
@@ -132,6 +135,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+CSRF_TRUSTED_ORIGINS = [
+    'https://resturent-monitering-system.onrender.com',
+]
+
 
 
 

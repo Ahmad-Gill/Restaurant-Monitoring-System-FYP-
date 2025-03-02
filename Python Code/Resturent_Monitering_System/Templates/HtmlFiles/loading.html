@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <link rel="stylesheet" href="{% static 'CssFiles/loading.css' %}">
+    <script src="{% static 'JavaScriptFiles/loading.js' %}" defer></script>
+</head>
+<body>
+    <div class="loading-container">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+    </div>
+</body>
+</html>

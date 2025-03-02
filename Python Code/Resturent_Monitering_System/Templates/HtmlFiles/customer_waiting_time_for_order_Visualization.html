@@ -6,13 +6,11 @@
 {% block home_active %}active{% endblock home_active %}
 
 {% block body %}
-<!-- Link to external CSS and JS files -->
+<!-- External CSS -->
 <link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
 <link href="{% static 'CssFiles/customer_waiting_time_for_order_Visualization.css' %}" rel="stylesheet">
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
-
-
-{% comment %} -------------------Slider------------------------ {% endcomment %}
+<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
 
 <h2>Order Fulfillment Lead Time</h2>
 <div class="page-slider">
@@ -20,27 +18,43 @@
     <h2><a href="{% url 'waiting_time_for_order_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
 </div>
 
+<!-- Main Container -->
+<div class="main-container">
+    
+    <!-- Sidebar for Available Dates -->
+    <div class="dates-container">
+        <h3>Available Dates</h3>
+        {% for date in available_dates %}
+            <a href="?date={{ date }}" class="date-link {% if selected_date == date %}selected{% endif %}">{{ date }}</a>
+        {% empty %}
+            <p>No dates available</p>
+        {% endfor %}
+    </div>
 
+    <!-- Data Display -->
+    <div class="containerr">
+        <h3>
+            {% if selected_date %}
+                Showing Data for: {{ selected_date }}
+            {% else %}
+                Showing All Data
+            {% endif %}
+        </h3>
 
-
-{% comment %} ----------------------------------Graphs Container ---------------------------- {% endcomment %}
-<div class="containerr">
-    <div class="charts-container">
-    <canvas id="waitingTimeChart1"></canvas>
-    <canvas id="waitingTimeChart2"></canvas>
+        <div class="charts-container">
+            <canvas id="waitingTimeChart1"></canvas>  <!-- Line Chart -->
+            <canvas id="waitingTimeChart2"></canvas>  <!-- Bar Chart -->
+        </div>
+    </div>
 </div>
-</div>
+
+<!-- Hidden div to store JSON data -->
+<!-- Hidden div to store JSON data -->
+<div id="groupedData" data-value='{{ grouped_data|safe }}'></div>
 
 
 
 
-<!-- Pass the waiting_time_data and total_waiting_time_data to a JavaScript variable -->
-<script>
-    const waitingTimeData = {{ waiting_time_data|safe }};
-    const total_waiting_time_data = {{ total_waiting_time_data|safe }};
-</script>
-
-<!-- Link to external JavaScript file -->
 <script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order_Visualization.js' %}"></script>
 
 {% endblock %}

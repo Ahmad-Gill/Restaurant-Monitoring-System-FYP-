@@ -25,25 +25,23 @@
         <thead>
             <tr>
                 <th>Table Number</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Waiting Time</th>
+                <th>Total AcupationTime</th>
+                <th>Waiting Time For Meal</th>
+                <th>Max People</th>
                 <th>Date</th>
                 <th>Image</th>
+                <th>Remove</th>
             </tr>
         </thead>
         <tbody>
             {% for time in waiting_times %}
             <tr>
                 <td>{{ time.table_number }}</td>
-                <td>{{ time.start_time|date:"g:i A" }}</td>
-                <td>{{ time.end_time|date:"g:i A" }}</td>
-                <td>
-                    <!-- Add a div to hold the waiting time -->
-                    <div class="waiting-time" data-start="{{ time.start_time|date:'Y-m-d H:i:s' }}" data-end="{{ time.end_time|date:'Y-m-d H:i:s' }}">
-                        Loading...
-                    </div>
-                </td>
+                <td>{{ time.total_time}} Minuts</td>
+                <td>{{ time.time_before_meal}} Minuts</td>
+                <td>{{ time.total_people|floatformat:0 }}</td>
+
+               
                 <td>{{ time.date }}</td>
                 <td>
                     {% if time.visual_representation %}
@@ -52,6 +50,9 @@
                         No Image Available
                     {% endif %}
                 </td>
+                <td><button class="btn btn-danger dell">Remove</button></td>
+
+
             </tr>
             {% endfor %}
         </tbody>

@@ -1,0 +1,31 @@
+:root {
+    --primary-color:  #5B4B8A;   /* Buttons */
+    --danger-color: #e74c3c;     /* Danger */
+    --headings: #ffffff;         /* For headings like h1, h2 */
+    --hover: #4A3A6A;            /* Hover color */
+    --background: black;
+
+
+
+    --font-size-small: 16px;     /* Small font size */
+    --font-size-medium: 36px;    /* Medium font size */
+    --font-size-large-h1: 100px; /* Large font size for h1 */
+
+
+
+
+
+
+    --secondary-color: #e64157;
+    --tertiary-color: #12c2e9;
+    --primary-gradient-color: linear-gradient(90deg,#e64157,#415de6);
+    --secondary-gradient-color: linear-gradient(to right, #12c2e9, #f64f59, #f64f59);
+    --underline-gradient: linear-gradient(to left, #12c2e9, #c471ed, #f64f59);
+    --vertical-gradient: linear-gradient(to top, #12c2e9, #c471ed, #f64f59);
+    --transition-default: all .4s ease;
+
+
+
+
+    --background-image: url('../images/bg.jpg'); /* Background image */
+}

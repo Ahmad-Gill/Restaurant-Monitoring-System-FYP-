@@ -1,0 +1,148 @@
+@import url('../CssFiles/variables.css');
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the entire dashboard content */
+    min-height: 100vh;
+    padding: 40px;
+    box-sizing: border-box;
+    background-color: transparent;
+    color: var(--headings);
+    overflow-y: auto;
+}
+
+.dashboard-title {
+    text-align: center; /* Center the title */
+    margin-bottom: 10px;
+    color: var(--headings);
+    font-size: var(--font-size-medium); /* Medium size font */
+    width: 100%; /* Ensure it takes full width */
+}
+
+/* Navigation links container */
+.navigation-links {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center the links */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    margin-bottom: 30px;
+    width: 100%; /* Ensure it takes full width */
+    text-align: center; /* Center text for smaller screens */
+}
+
+/* Individual navigation link styling */
+.navigation-links a {
+    margin: 0 20px;
+    text-decoration: none;
+    color: var(--headings);
+    font-weight: bold;
+    font-size: 18px;
+    transition: var(--transition-default);
+}
+
+.navigation-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Main grid for dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns by default */
+    gap: 30px;
+    margin-bottom: 30px;
+    width: 100%; /* Ensure grid takes full width */
+    max-width: 1200px; /* Limit the maximum width to avoid too much stretching */
+}
+
+/* Card styling for each chart */
+.dashboard-card {
+    background-color: var(--background);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    justify-content: space-between;
+}
+
+.dashboard-card h4 {
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: var(--headings);
+}
+
+.chart-container {
+    width: 100%;
+    height: 250px; /* Default height */
+    position: relative;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Two charts side by side for smaller screens */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* Two columns for medium and smaller screens */
+        gap: 20px; /* Maintain spacing between charts */
+    }
+
+    .dashboard-card {
+        width: 100%;
+    }
+
+    .chart-container {
+        height: 200px; /* Adjust height for smaller screens */
+    }
+}
+
+/* Two charts side by side for small screens */
+@media (max-width: 767px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* Keep two charts side by side */
+        gap: 15px; /* Reduce gap on smaller screens */
+    }
+
+    .dashboard-card {
+        padding: 15px; /* Reduce padding for small screens */
+    }
+
+    .chart-container {
+        height: 150px; /* Smaller chart height for small screens */
+    }
+
+    /* Center-align title and navigation links on small screens */
+    .dashboard-title, .navigation-links {
+        text-align: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .navigation-links a {
+        margin: 10px; /* Add margin for links on small screens */
+    }
+}
+
+/* Adjust for very narrow screens */
+@media (max-width: 480px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* Two charts side by side */
+        gap: 10px; /* Smaller gap for very small screens */
+    }
+
+    .chart-container {
+        height: 130px; /* Further reduce chart height */
+    }
+
+    .navigation-links a {
+        margin: 5px 10px; /* Adjust link spacing on narrow screens */
+    }
+}

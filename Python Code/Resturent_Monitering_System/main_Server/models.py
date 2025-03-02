@@ -22,18 +22,35 @@ class Categories(models.Model):
 
     def __str__(self):
         return self.name if self.name else "No Name"  
-    
 class CustomerOrderWaitingTime(models.Model):
-    table_number = models.IntegerField(null=True, blank=True) 
-    start_time = models.DateTimeField()  # When the customer arrives
-    end_time = models.DateTimeField()    # When the waiter comes to take the order
-    date = models.DateField(auto_now_add=True)  # Automatically set to now when created
-    visual_representation = models.ImageField(upload_to='images/waiting_time/', blank=True, null=True)  # Only image
-
+    table_number = models.IntegerField(null=True, blank=True)
+    time_before_meal = models.FloatField(default=0.0)
+    total_time = models.FloatField(default=0.0)
+    total_people=models.FloatField(default=0.0)
+    date = models.DateField()
+    visual_representation = models.ImageField(upload_to="order_images/", null=True, blank=True)  
 
     def __str__(self):
-       return f"Order served from {self.start_time.strftime('%Y-%m-%d %H:%M')} to {self.end_time.strftime('%Y-%m-%d %H:%M')} on {self.date}"
+        return f"Table {self.table_number} - {self.date}"
+class CustomerOrderSummary(models.Model):
+    table_number = models.IntegerField()
+    total_people = models.IntegerField()
+    people_per_hour = models.JSONField(default=dict)  # Stores per-hour people count
+    meals = models.JSONField(default=dict)  # Stores meal counts
+    date = models.DateField()
+    meal_image = models.ImageField(upload_to="meal_images/", null=True, blank=True)
 
+    def __str__(self):
+        return f"Table {self.table_number} - {self.date}"
+
+
+
+class Visitor(models.Model):
+    name = models.CharField(max_length=100)  
+    visit_time = models.DateTimeField(auto_now_add=True) 
+
+    def __str__(self):
+        return self.name
 
 class CustomerOrderServingTime(models.Model):
     table_number = models.IntegerField(null=True, blank=True) 

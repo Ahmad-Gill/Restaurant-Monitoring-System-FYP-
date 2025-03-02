@@ -1,0 +1,104 @@
+/* --------------------Charts COntainer---------------------- */
+
+.charts-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 20px 0; 
+    gap: 20px; 
+}
+
+canvas {
+    flex: 1 1 300px; 
+    max-width: 48%;
+    height: 300px; 
+    margin: 0;
+    z-index: 1; 
+    background-color: #000;
+}
+.containerr {
+    padding: 20px; 
+    background-color: transparent; 
+    border-radius: 8px; 
+}
+
+
+
+
+/* --------------For Smaller Secreens -------------------- */
+
+/* Media query for screens between 768px and 1200px */
+@media (max-width: 1200px) {
+    canvas {
+        flex: 1 1 45%; /* Two charts side by side */
+    }
+}
+
+/* Optional: Add media query for very small screens */
+@media (max-width: 767px) {
+    canvas {
+        flex: 1 1 100%; /* Full width on smaller screens */
+        max-height: 250px; /* Optional: reduce height on smaller screens */
+    }
+}
+
+
+
+/* Sidebar Styles */
+.dates-container {
+    width: 250px; /* Fixed sidebar width */
+    height: 50vh; /* 50% of viewport height */
+    position: fixed; /* Stick to the left */
+    top: 50%; /* Center vertically */
+    left: 0;
+    transform: translateY(-50%); /* Adjust for exact centering */
+    background-color: black; /* Dark background */
+    color: white; /* White text */
+    padding: 20px;
+    overflow-y: auto; /* Scroll if too many dates */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+    border-radius: 10px; /* Rounded edges */
+}
+
+/* Sidebar Header */
+.dates-container h3 {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    border-bottom: 2px solid white;
+    padding-bottom: 10px;
+}
+
+/* Date Links */
+.date-link {
+    display: block;
+    padding: 10px 15px;
+    margin: 5px 0;
+    text-decoration: none;
+    color: white;
+    background: rgba(255, 255, 255, 0.1); /* Slight transparent effect */
+    border-radius: 5px;
+    transition: 0.3s;
+    text-align: center;
+}
+
+/* Hover Effect */
+.date-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+/* Highlight Selected Date */
+.date-link.selected {
+    background: white;
+    color: black;
+    font-weight: bold;
+}
+
+/* Adjust main content to fit next to sidebar */
+.main-container {
+    margin-left: 270px; /* Make space for sidebar */
+    padding: 20px;
+}
+

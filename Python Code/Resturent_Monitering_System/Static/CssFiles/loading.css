@@ -1,0 +1,59 @@
+/* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #0d0d0d, #1a1a1a); /* Dark restaurant theme */
+    overflow: hidden;
+}
+
+/* Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeOut 3s ease-in-out forwards;
+}
+
+/* Logo Styling */
+.logo {
+    width: 180px;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-in-out forwards;
+    filter: drop-shadow(0px 0px 10px rgba(255, 215, 0, 0.7)); /* Golden Glow */
+}
+
+/* Button Styling */
+.continue-btn {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background: #6a0dad; /* Purple button */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    animation: fadeIn 2s ease-in-out 1s forwards;
+}
+
+.continue-btn:hover {
+    background: #8000ff; /* Brighter purple on hover */
+    transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}

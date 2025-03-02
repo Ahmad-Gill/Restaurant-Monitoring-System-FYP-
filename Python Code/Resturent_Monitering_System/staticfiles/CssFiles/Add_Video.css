@@ -1,0 +1,433 @@
+/* -------------------------------- */
+/* Section: Styling Labels as Buttons */
+/* -------------------------------- */
+label.custom-file-input {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+label.custom-file-input:hover {
+    background-color: var(--hover);
+}
+
+label.custom-file-input:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* -------------------------------- */
+/* Section: Full-Screen Overlay */
+/* -------------------------------- */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+/* -------------------------------- */
+/* Section: Lottie Animation Styling */
+/* -------------------------------- */
+#lottie-animation {
+    width: 50vw;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+/* -------------------------------- */
+/* Section: Submit Button Styling */
+/* -------------------------------- */
+button.submit-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--headings);
+    cursor: pointer;
+}
+
+button.submit-btn:hover {
+    background-color: var(--hover);
+}
+
+
+
+/* -------------------------------- */
+/* Section: Next Button Styling */
+/* -------------------------------- */
+.next-btn {
+    padding: 12px 30px;
+    font-size: 18px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 30px;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: auto;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    text-decoration: none;
+    outline: none;
+}
+
+.next-btn:hover {
+    background-color: var(--hover);
+    transform: scale(1.05);
+}
+
+/* -------------------------------- */
+/* Section: Form Container Styling */
+/* -------------------------------- */
+.container_ {
+    text-align: center;
+    width: 80%;
+    padding: 40px 20px 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* File input margin adjustment */
+label.custom-file-input, input[type="file"] {
+    margin-bottom: 20px;
+}
+
+/* -------------------------------- */
+/* Section: Image Styling */
+/* -------------------------------- */
+#frameImage {
+    width: 90% !important;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+/* -------------------------------- */
+/* Section: Buttons for Grids */
+/* -------------------------------- */
+#submitGridsBtn, #addGridBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#submitGridsBtn:hover, #addGridBtn:hover {
+    background-color: var(--hover);
+}
+
+#submitGridsBtn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* -------------------------------- */
+/* Section: Input Fields Styling */
+/* -------------------------------- */
+.grid-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.grid-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: var(--primary-color);
+    outline: none;
+}
+
+.grid-input::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+.grid-input:invalid {
+    border-color: red;
+}
+
+.grid-input:disabled {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* -------------------------------- */
+/* Section: Edit and Delete Buttons */
+/* -------------------------------- */
+.edit-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-btn:hover {
+    background-color: #45a049;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* -------------------------------- */
+/* Section: Upload Status Message */
+/* -------------------------------- */
+#upload-status {
+    font-size: 18px;
+    color: green;
+    margin-top: 20px;
+    text-align: center;
+    display: none;
+}
+
+#upload-status.show {
+    display: block;
+}
+
+/* -------------------------------- */
+/* Page Title and Subtitle Styling */
+/* -------------------------------- */
+.page-subtitle {
+    font-size: 20px;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 30px;
+    line-height: 1.5;
+    font-weight: lighter;
+    opacity: 0.85;
+}
+/* -------------------------------- */
+/* Uploaded Videos Section */
+/* -------------------------------- */
+.uploaded-videos-section {
+    margin-top: 40px;
+    text-align: center;
+    background-color: #000000; /* Set to complete black */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0); /* Optional: remove shadow if not needed */
+}
+
+.section-title {
+    font-size: 22px;
+    color: #ffffff; /* Set title text to white for contrast */
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.video-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 700px;
+    text-align: left;
+    color: white; /* Set text color to white for contrast */
+}
+
+.video-item {
+    font-size: 16px;
+    color: #ffffff; /* Set video item text color to white */
+    background-color: #333333; /* Set video item background to a dark gray for contrast */
+    margin-bottom: 12px;
+    padding: 15px;
+    border: 1px solid #444444; /* Darker border */
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+}
+
+/* -------------------------------- */
+/* Form and Button Styling Adjustments for Mobile */
+/* -------------------------------- */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 28px;
+    }
+
+    .page-subtitle {
+        font-size: 18px;
+    }
+
+    .video-list {
+        padding: 0 15px;
+    }
+
+    .custom-file-input {
+        padding: 14px 20px;
+        font-size: 16px;
+    }
+
+    .submit-btn, .next-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .video-item {
+        font-size: 14px;
+        padding: 12px;
+    }
+}
+
+/* 
+combine submit and get grids buttion */
+.flex-row {
+    display: flex;
+    align-items: center !important;
+    justify-content: center; /* Centers horizontally */
+    gap: 20px; /* Spacing between buttons */
+    margin-bottom: 20px;
+}
+
+
+#loading-message-container {
+    height: 200px; /* Fixed height */
+    width: 100%;  /* Full width */
+    max-width: 1000px; /* Optional: Set a maximum width */
+    overflow-y: scroll; /* Allows scrolling when content exceeds the height */
+    background-color: black; /* Set the background to black */
+    color: white; /* Set text color to white for contrast */
+    border: 1px solid black; /* Optional: Add border for visual separation */
+    padding: 10px; /* Optional: Padding inside the scrollable div */
+    margin: 0 auto; /* Center horizontally */
+    position: absolute; /* Positioning the element */
+    top: 70%; /* Position from the top */
+    left: 50%; /* Position from the left */
+    transform: translate(-50%, -50%); /* Centering it perfectly */
+    
+    /* Custom Scrollbar Styling */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #555 #000; /* Firefox: thumb color, track color */
+}
+
+#loading-message-container::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+}
+
+#loading-message-container::-webkit-scrollbar-thumb {
+    background-color: #555; /* Thumb color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+#loading-message-container::-webkit-scrollbar-track {
+    background-color: black; /* Track color */
+}
+
+#loading-message {
+    font-size: 16px; /* Adjust text size as needed */
+}
+
+
+.next-btn-container {
+    text-decoration: none;  /* Remove underline */
+    color: inherit;  /* Optional: removes any default link color */
+}
+
+.next-btn-container:focus,
+.next-btn-container:hover,
+.next-btn-container:active {
+    text-decoration: none;  /* Remove underline on hover, focus, and active states */
+}
+
+
+
+
+
+
+
+/*Extracted Framework----------------------------------------------------------------*/
+/* Style for the extracted frame section */
+.frame-section {
+    text-align: center;
+    margin: 20px auto;
+    background-color: #000; /* Black background for the section */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 70%; /* Make sure the container's width doesn't exceed 70% of the screen */
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensures no overflow occurs */
+}
+
+.frame-section h3 {
+    font-size: 24px;
+    color: #fff; /* White text for the header */
+    margin-bottom: 15px;
+}
+
+.frame-section img {
+    width: 100%; /* The image will take up the full width of its container */
+    height: auto;
+    max-width: 100%; /* Prevents image from exceeding container */
+    border: 3px solid #fff; /* White border for the image */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Darker shadow for better contrast */
+}
+
+.frame-section p {
+    font-size: 18px;
+    color: #f44336;
+    margin-top: 15px;
+}

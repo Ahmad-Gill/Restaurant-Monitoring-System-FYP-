@@ -1,0 +1,166 @@
+@import url('../CssFiles/variables.css');
+
+html, body {
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    overflow-y: scroll; /* Enable vertical scrolling */
+    -ms-overflow-style: none;  
+    height: auto; 
+    margin: 0; 
+    scroll-behavior: smooth;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: var(--headings); /* Default color */
+    font-family: 'Dancing Script', cursive; /* Apply Dancing Script font */
+    font-style: italic; /* Italic for h2 */
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none; /* Hide scrollbar */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px !important;
+    background-image: var(--background-image); /* Main background image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh; 
+    position: relative; 
+    
+}
+
+/* Black overlay over the body */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; 
+    background-color: rgba(0, 0, 0, 0.7); /* Black with 50% opacity */
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; 
+    min-height: 100vh;
+}
+
+
+/* --------------------LOGO------------------------------------- */
+.logo {
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    z-index: 0; 
+}
+
+.rotate {
+    animation: spin 2s linear infinite; /* Continuous spinning animation */
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg); /* Start rotation */
+    }
+    to {
+        transform: rotate(360deg); /* Full rotation */
+    }
+}
+
+/*-------------------------NAV BAar------------------------- */
+.navbar {
+    z-index: 2; 
+}
+.navbar .nav-link {
+    text-decoration: none; 
+    color:var(--headings);
+    position: relative;
+}
+
+.navbar .nav-link::after {
+    content: ''; 
+    display: block; 
+    height: 5px; 
+    background-color:var(--primary-color);
+    position: absolute;
+    left: 0; 
+    bottom: -5px; 
+    width: 100%; 
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.navbar .nav-link:hover::after {
+    transform: scaleX(1); 
+    color: var(--headings);
+}
+.navbar .nav-link:hover {
+    transform: scaleX(1); 
+    color: var(--headings);
+}
+
+
+
+
+.admin-enabled {
+    color: var(--headings); /* Color for Ahmad */
+    font-weight: bold;
+}
+
+.admin-disabled {
+    color: var(--headings); /* Color for other users */
+    font-weight: bold;
+    pointer-events: none; 
+    text-decoration: none; 
+}
+
+/* CssFiles/navbar.css */
+.navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* High z-index */
+    width: 100%;
+    color: var(--headings);
+    font-weight: bold;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+.nav-link.active {
+    font-weight: bold; 
+    color: var(--headings);
+}
+
+/* --------------------Container------------------------------------*/
+
+.content {
+    position: relative;
+    z-index: 2;
+    color: var(--headings, #ffffff); 
+    text-align: center;
+    padding-top: 50px;
+    flex-grow: 1; 
+    margin-top: 30px; 
+}
+/* --------------------Footer------------------------------------*/
+.footer {
+    color: var(--primary-color);
+    text-align: center;
+    padding: 10px;
+    font-size: var(--font-size-small);
+}
+
+h1 {
+    font-size: var(--font-size-large-h1) !important;
+    font-weight: bold; 
+    padding: 20px;
+}
+
+
