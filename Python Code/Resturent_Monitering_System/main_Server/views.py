@@ -207,6 +207,8 @@ def process_folder(input_folder: str, output_folder: str):
     total_frame_count = 0
     frame_count_for_meal = 0
     max_people = 0
+    wait_count = 0  
+    stable_count = None
     tracking_active = False
     food_folder_created = False
     num_of_party=False
@@ -250,7 +252,15 @@ def process_folder(input_folder: str, output_folder: str):
         print(f"Person: {person_count} Meal Count: {meal_count}")
         if person_count >= 2 or tracking_active:       #this code only works whne there is a person in in the frame or we are already in a tracking phase 
             num_of_party=True                          #this code shos that we found the party and it will count time untill this party leaves 
-            max_people = max(max_people, person_count)
+            if person_count == stable_count:
+                    wait_count += 1
+            else:
+                    stable_count = person_count
+                    wait_count = 1  # Reset count if it changes
+
+                # Apply logic for setting max_people only if count remains stable for 3 rounds
+            if wait_count == 3:
+                    max_people = max(max_people, stable_count)
             if person_count >= 2 and meal_count >= 1 and not tracking_active:          #tracting is only active when there is a meal available and also a person this also use when there is a left behind meal after party leaves
                 tracking_active = True
                 food_folder_created = True
@@ -1063,14 +1073,47 @@ def analytics_review(request):
     }
     return render(request, "HtmlFiles/analytics.html", context)
 def analytics_tables(request):
-    url_ = "/categories/"  
+    url_ = "/categories/"
     link_text = "Categories"
+    summaries = CustomerOrderSummary.objects.all()
+
+    grouped_data = {}  
+    max_people_per_day = defaultdict(int)  #  Track total people per day
+    combined_people_per_hour = defaultdict(lambda: defaultdict(int))  #  Track people per hour per date
+    peak_hours_per_day = {}  #  Store peak hours per date
+
+    for summary in summaries:
+        date = summary.date.strftime("%Y-%m-%d")
+
+        max_people_per_day[date] += summary.total_people  #  Sum total people per day
+
+        for hour, count in summary.people_per_hour.items():
+            combined_people_per_hour[date][hour] += count  # Aggregate people per hour
+
+        if date not in grouped_data:
+            grouped_data[date] = {
+                "table_number": summary.table_number,
+                "meals": {},
+                "meal_image": summary.meal_image  #  Use first available image per date
+            }
+
+        for dish, count in summary.meals.items():
+            grouped_data[date]["meals"][dish] = grouped_data[date]["meals"].get(dish, 0) + count  #  Combine meal counts
+
+    for date, hour_counts in combined_people_per_hour.items():
+        if hour_counts:
+            peak_hour = max(hour_counts, key=hour_counts.get)  #  Find peak hour
+            peak_hours_per_day[date] = {"hour": peak_hour, "count": hour_counts[peak_hour]}
+
     context = {
-        'active_page': 'statistics', 
+        'active_page': 'statistics',
         'url_': url_,
-        'link_text': link_text, 
+        'link_text': link_text,
+        "grouped_data": grouped_data,
+        'max_people_per_day': dict(max_people_per_day),
+        "peak_hours_per_day": peak_hours_per_day
     }
-    return render(request, 'HtmlFiles/analytics_tables.html',context)
+    return render(request, 'HtmlFiles/analytics_tables.html', context)
 
 
 # step 15 
@@ -1088,33 +1131,31 @@ def customer_waiting_time_for_order(request):
     }
     return render(request, 'HtmlFiles/customer_waiting_time_for_order.html', context)
 def customer_waiting_time_for_order_Visualization(request):
+    url_ = "/categories/"  
+    link_text = "Categories"
     waiting_times = CustomerOrderWaitingTime.objects.all()
-
-    # Group data by date
     data_by_date = defaultdict(lambda: {"waiting_times_before_meal": [], "total_times": []})
-    available_dates = set()  # Store available dates
+    available_dates = set() 
 
     for time in waiting_times:
         date_str = time.date.strftime("%Y-%m-%d")
         available_dates.add(date_str)
         data_by_date[date_str]["waiting_times_before_meal"].append(time.time_before_meal)
         data_by_date[date_str]["total_times"].append(time.total_time)
-
-    # Convert to JSON-friendly format
     grouped_data = [{"date": date, "data": data} for date, data in data_by_date.items()]
     grouped_data_json = json.dumps(grouped_data)  # Convert to JSON
-
-    # Handle selected date filtering
     selected_date = request.GET.get("date")
     filtered_data = next((entry for entry in grouped_data if entry["date"] == selected_date), None)
 
     context = {
+        'url_': url_,
+        'link_text': link_text,
         "grouped_data": grouped_data_json,  # JSON Data
         "available_dates": sorted(available_dates),  # All Dates
         "selected_date": selected_date,  # Current Selected Date
         "active_page": "Visualization",
     }
-    return render(request, "HtmlFiles/customer_waiting_time_for_order_Visualization.html", context)
+    return render(request, "HtmlFiles/customer_waiting_time_for_order_Visualization.html", context) 
 
 
 #-------------TO be used later  --------------------------------

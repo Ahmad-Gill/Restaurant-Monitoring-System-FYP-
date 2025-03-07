@@ -22,7 +22,7 @@
 <div class="main-container">
     
     <!-- Sidebar for Available Dates -->
-    <div class="dates-container">
+    <div class="dates-container ">
         <h3>Available Dates</h3>
         {% for date in available_dates %}
             <a href="?date={{ date }}" class="date-link {% if selected_date == date %}selected{% endif %}">{{ date }}</a>
@@ -33,13 +33,7 @@
 
     <!-- Data Display -->
     <div class="containerr">
-        <h3>
-            {% if selected_date %}
-                Showing Data for: {{ selected_date }}
-            {% else %}
-                Showing All Data
-            {% endif %}
-        </h3>
+
 
         <div class="charts-container">
             <canvas id="waitingTimeChart1"></canvas>  <!-- Line Chart -->
@@ -48,9 +42,8 @@
     </div>
 </div>
 
-<!-- Hidden div to store JSON data -->
-<!-- Hidden div to store JSON data -->
 <div id="groupedData" data-value='{{ grouped_data|safe }}'></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
 

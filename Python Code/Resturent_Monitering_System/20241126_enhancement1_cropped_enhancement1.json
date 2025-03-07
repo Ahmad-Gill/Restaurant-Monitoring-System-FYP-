@@ -30,5 +30,21 @@
             "10AM": 2,
             "11AM": 2
         }
+    },
+    "3": {
+        "total_time": 24.0,
+        "time_before_meal": 6.5,
+        "meal": {
+            "Roti": 1,
+            "Biryani": 1
+        },
+        "total_people": 2,
+        "total_people_per_hour": {
+            "7AM": 2,
+            "8AM": 3,
+            "9AM": 2,
+            "10AM": 3,
+            "11AM": 2
+        }
     }
 }

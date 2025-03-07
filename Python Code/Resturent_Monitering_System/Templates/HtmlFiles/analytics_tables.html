@@ -13,6 +13,7 @@
 
 
 
+
 <h2>General Analytics Report</h2>
 
 
@@ -31,33 +32,99 @@
 
 
 
-<div class="dashboard-container">
+<div class="containerr">
+    <h2> Order Details</h2>
+    <table class="waiting-time-table">
+        <thead>
+            <tr>
+                <th>Dining ID</th>
+                <th>Favorite Dish</th>
+                <th>Dish Count</th>
+                <th>Date</th>
+                <th>Image</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for date, details in grouped_data.items %}
+                {% for dish, count in details.meals.items %}
+                    <tr>
+                        <td>{{ details.table_number }}</td>
+                        <td>{{ dish }}</td>
+                        <td>{{ count }}</td>
 
-    
-    <div class="table-grid">
-        <div class="dashboard-card">
-            <h4>Most Ordered Dishes</h4>
-            <table class="data-table" id="dishesTable"></table>
-        </div>
-        <div class="dashboard-card">
-            <h4>Customer Count</h4>
-            <table class="data-table" id="countTable"></table>
-        </div>
-        <div class="dashboard-card">
-            <h4>Peak Hours</h4>
-            <table class="data-table" id="peakHoursTable"></table>
-        </div>
-        <div class="dashboard-card">
-            <h4>Customer Satisfaction</h4>
-            <table class="data-table" id="satisfactionTable"></table>
-        </div>
+                        <td>{{ date }}</td>
+                        <td>
+                            {% if details.meal_image %}
+                                <img src="{{ details.meal_image.url }}" alt="Meal Image" class="img-thumbnail">
+                            {% else %}
+                                <img src="/static/default-image.jpg" alt="Default Image" class="img-thumbnail">
+                            {% endif %}
+                        </td>
+                        <td><button class="btn btn-danger dell">Remove</button></td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="containerr">
+    <h2>Maximum People Per Day</h2>
+    <div class="table-responsive">
+        <table class="waiting-time-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Max People</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if max_people_per_day %}
+                    {% for date, max_people in max_people_per_day.items %}
+                        <tr>
+                            <td>{{ date }}</td>
+                            <td>{{ max_people }}</td>
+                            <td><button class="btn btn-danger dell">Remove</button></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center">No data available</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
     </div>
 </div>
 
-<!-- Pass the static URL to JavaScript -->
-<script>
-    const staticUrl = "{% static '' %}";
-</script>
 
-<script src="{% static 'JavaScriptFiles/analytics_tables.js' %}" defer></script>
+
+<div class="containerr">
+    <h2>Peak Hour Per Day</h2>
+    <table class="waiting-time-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Peak Hour</th>
+                <th>People Count</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for date, peak_info in peak_hours_per_day.items %}
+                <tr>
+                    <td>{{ date }}</td>
+                    <td>{{ peak_info.hour }}:00</td>
+                    <td>{{ peak_info.count }}</td>
+                    <td><button class="btn btn-danger dell">Remove</button></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
 {% endblock body %}

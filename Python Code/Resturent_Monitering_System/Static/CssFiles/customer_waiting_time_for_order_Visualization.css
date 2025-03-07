@@ -1,93 +1,130 @@
-/* --------------------Charts COntainer---------------------- */
-
+/* -------------------- Charts Container ---------------------- */
 .charts-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     flex-wrap: wrap;
-    margin: 20px 0; 
-    gap: 20px; 
+    gap: 60px;
+    margin: 20px 0;
+    padding: 20px;
 }
 
 canvas {
-    flex: 1 1 300px; 
+    flex: 1 1 300px;
     max-width: 48%;
-    height: 300px; 
+    height: 300px;
     margin: 0;
-    z-index: 1; 
+    z-index: 1;
     background-color: #000;
-}
-.containerr {
-    padding: 20px; 
-    background-color: transparent; 
-    border-radius: 8px; 
+    border-radius: 8px;
 }
 
+/* Ensuring charts are centered properly */
+.charts-container canvas {
+    max-width: 45%;
+    min-width: 280px;
+    max-height: 400px;
+    height: auto;
+}
 
-
-
-/* --------------For Smaller Secreens -------------------- */
-
-/* Media query for screens between 768px and 1200px */
+/* -------------------- Responsive Adjustments -------------------- */
 @media (max-width: 1200px) {
-    canvas {
-        flex: 1 1 45%; /* Two charts side by side */
+    .charts-container canvas {
+        flex: 1 1 45%;
     }
 }
 
-/* Optional: Add media query for very small screens */
-@media (max-width: 767px) {
-    canvas {
-        flex: 1 1 100%; /* Full width on smaller screens */
-        max-height: 250px; /* Optional: reduce height on smaller screens */
+@media (max-width: 768px) {
+    .dates-container {
+        display: none !important;
+    }
+
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .charts-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .charts-container canvas {
+        width: 90% !important;
+        max-width: 90% !important;
+        min-height: 250px;
+        max-height: 400px;
     }
 }
-/* Sidebar Styles */
+
+/* -------------------- Sidebar ---------------------- */
 .dates-container {
-    width: 250px; /* Fixed sidebar width */
-    height: 50vh; /* 50% of viewport height */
-    position: fixed; /* Stick to the left */
-    top: 50%; /* Center vertically */
-    left: 50px;
-    transform: translateY(-50%); /* Adjust for exact centering */
-    background-color: black; /* Dark background */
-    color: white; /* White text */
-    padding: 20px;
-    overflow-y: auto; /* Scroll if too many dates */
-    border-radius: 10px; /* Rounded edges */
+    width: 250px;
+    padding: 10px;
+    background: black;
+    text-align: center;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-left: 1px;
+    border-radius: 8px;
 }
 
+/* -------------------- Main Content ---------------------- */
+.main-container {
+    display: flex;
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 40px;
+    box-sizing: border-box;
+    overflow: hidden;
+    align-items: flex-start;
+    
+}
 
-
-/* Date Links */
+/* -------------------- Date Links ---------------------- */
 .date-link {
     display: block;
-    padding: 10px 15px;
-    margin: 5px 0;
+    padding: 12px 16px;
+    margin: 6px 0;
     text-decoration: none;
     color: white;
-    background: rgba(255, 255, 255, 0.1); /* Slight transparent effect */
-    border-radius: 5px;
-    transition: 0.3s;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    transition: background 0.3s ease, transform 0.2s ease;
     text-align: center;
+    font-size: 14px;
+    font-weight: 500;
 }
 
-/* Hover Effect */
 .date-link:hover {
     background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
     cursor: pointer;
 }
 
-/* Highlight Selected Date */
 .date-link.selected {
     background: white;
     color: black;
     font-weight: bold;
 }
 
-/* Adjust main content to fit next to sidebar */
-.main-container {
-    margin-left: 300px; /* Make space for sidebar */
-    margin-right: 50px;
-    padding: 20px;
-}
+/* -------------------- Small Screen Fixes ---------------------- */
+@media (max-width: 768px) {
+    .charts-container {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+        overflow-x: hidden;
+    }
 
+    .charts-container canvas {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 250px;
+        max-height: 400px;
+        margin: 10px 0;
+    }
+}

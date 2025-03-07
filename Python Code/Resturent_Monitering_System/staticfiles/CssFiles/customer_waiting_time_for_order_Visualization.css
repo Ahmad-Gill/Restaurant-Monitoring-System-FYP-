@@ -41,6 +41,12 @@ canvas {
         max-height: 250px; /* Optional: reduce height on smaller screens */
     }
 }
+@media (max-width: 768px) { /* Adjust breakpoint as needed */
+    .dates-container {
+        display: none!important;
+    }
+}
+
 
 
 
@@ -100,5 +106,19 @@ canvas {
 .main-container {
     margin-left: 270px; /* Make space for sidebar */
     padding: 20px;
+}
+
+
+.dates-container {
+    width: 250px; /* Sidebar width */
+    padding: 10px;
+    background: #f5f5f5;
+    text-align: center;
+    flex-shrink: 0; /* Ensures sidebar does not shrink */
+    
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100vh; /* Full height */
 }
 
