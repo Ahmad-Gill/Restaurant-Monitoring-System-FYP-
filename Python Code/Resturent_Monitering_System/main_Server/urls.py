@@ -10,7 +10,7 @@ urlpatterns = [
     path('home/', views.main, name='main'),  # Changed from '' to 'home/'
 
     # Analytics
-    path('analytics/', views.analytics_review, name='analytics'),
+    path('analytics/', views.analytics, name='analytics'),
     path('analytics_table/', views.analytics_tables, name='analytics_table'),
     path('checks/', views.checks, name='checks'),
 

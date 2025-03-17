@@ -40,6 +40,7 @@ from django.conf import settings
 # Modules for miscellaneous tasks such as creating unique IDs, handling JSON data, etc.
 import uuid
 import json
+from json import dumps as json_dumps
 import random
 import re
 
@@ -1018,60 +1019,111 @@ def preprocessing_2(request):
 # step 14
 
 #------------  Function to show General  Informations --------------------------------
-def analytics_review(request):
-    url_ = "/categories/"  
+def analytics(request):
+    url_ = "/categories/"
     link_text = "Categories"
-    context = {
-        'url_': url_,
-        'link_text': link_text, 
-         'active_page': 'Visualization',
-        "top_dishes": [
-            {"name": "Pizza", "count": 300},
-             {"name": "Pizza", "count": 300},
-              {"name": "Piza", "count": 300},
-               {"name": "Pia", "count": 300},
-                {"name": "Pizza", "count": 300},
-                 {"name": "Pizza", "count": 300},
-                  {"name": "Pizza", "count": 300},
-                   {"name": "Pizza", "count": 300},
+    summaries = CustomerOrderSummary.objects.all()
+    
+    # Get all available dates for the filter dropdown
+    available_dates = set()
+    for summary in summaries:
+        available_dates.add(summary.date.strftime("%Y-%m-%d"))
+    available_dates = sorted(available_dates)
+    
+    # Check for date selection from request
+    selected_date = request.GET.get("date")
+    
+    # If a date is selected, filter summaries by that date
+    filtered_summaries = summaries
+    if selected_date:
+        filtered_summaries = [s for s in summaries if s.date.strftime("%Y-%m-%d") == selected_date]
 
-            {"name": "Burger", "count": 250},
-            {"name": "Pasta", "count": 200},
-            {"name": "Salad", "count": 150},
-            {"name": "Steak", "count": 100},
-            {"name": "coffee", "count": 20},
-            {"name": "chai", "count": 10},
-            {"name": "doodh", "count": 100}
-        ],
-        "customer_count": [
-            {"date": "Mon", "customer": 5000},
-            {"date": "Tue", "customer": 5500},
-            {"date": "Wed", "customer": 6000},
-            {"date": "Thu", "customer": 5800},
-            {"date": "Fri", "customer": 7000},
-            {"date": "Sat", "customer": 8000},
-            {"date": "Sun", "customer": 7500}
-        ],
-        "peak_hours": [
-            {"time": "11am", "count": 20},
-            {"time": "12pm", "count": 40},
-            {"time": "1pm", "count": 60},
-            {"time": "2pm", "count": 50},
-            {"time": "3pm", "count": 30},
-            {"time": "4pm", "count": 35},
-            {"time": "5pm", "count": 45},
-            {"time": "6pm", "count": 70},
-            {"time": "7pm", "count": 80},
-            {"time": "8pm", "count": 60}
-        ],
-        "satisfaction": [
-            {"rating": "Excellent", "count": 60},
-            {"rating": "Good", "count": 25},
-            {"rating": "Average", "count": 10},
-            {"rating": "Poor", "count": 5}
-        ]
+    grouped_data = {}
+    max_people_per_day = defaultdict(int)  # Track total people per day
+    combined_people_per_hour = defaultdict(lambda: defaultdict(int))  # Track people per hour per date
+    peak_hours_per_day = {}  # Store peak hours per date
+    all_meals = defaultdict(int)  # Aggregate all meals for bar chart
+
+    # Data for charts
+    chart_data = {
+        "bar_chart": {"labels": [], "data": []},  # Popular dishes
+        "pie_chart": {"labels": [], "data": []},  # Peak hours distribution
+        "line_chart": {"labels": [], "datasets": []}  # Customer trends
     }
-    return render(request, "HtmlFiles/analytics.html", context)
+
+    for summary in filtered_summaries:
+        date = summary.date.strftime("%Y-%m-%d")
+
+        max_people_per_day[date] += summary.total_people  # Sum total people per day
+
+        for hour, count in summary.people_per_hour.items():
+            combined_people_per_hour[date][hour] += count  # Aggregate people per hour
+
+        if date not in grouped_data:
+            grouped_data[date] = {
+                "table_number": summary.table_number,
+                "meals": {},
+                "meal_image": summary.meal_image  # Use first available image per date
+            }
+
+        for dish, count in summary.meals.items():
+            grouped_data[date]["meals"][dish] = grouped_data[date]["meals"].get(dish, 0) + count  # Combine meal counts
+            all_meals[dish] += count  # Aggregate all meals for the bar chart
+
+    # Process data for bar chart (popular dishes)
+    sorted_meals = sorted(all_meals.items(), key=lambda x: x[1], reverse=True)[:10]  # Top 10 dishes
+    chart_data["bar_chart"]["labels"] = [meal[0] for meal in sorted_meals]
+    chart_data["bar_chart"]["data"] = [meal[1] for meal in sorted_meals]
+
+    # Process data for pie chart (peak hours distribution)
+    # If a date is selected, only show peak hours for that date
+    if selected_date:
+        peak_hours_data = {}
+        for date, hour_data in combined_people_per_hour.items():
+            if date == selected_date:  # Only process the selected date
+                for hour, count in hour_data.items():
+                    peak_hours_data[hour] = count
+    else:
+        # Otherwise, aggregate peak hours across all dates
+        peak_hours_data = {}
+        for date, hour_data in combined_people_per_hour.items():
+            for hour, count in hour_data.items():
+                peak_hours_data[hour] = peak_hours_data.get(hour, 0) + count
+                
+    sorted_peak_hours = sorted(peak_hours_data.items())
+    chart_data["pie_chart"]["labels"] = [hour for hour, _ in sorted_peak_hours]
+    chart_data["pie_chart"]["data"] = [count for _, count in sorted_peak_hours]
+
+    # Process data for line chart (customer trends over time)
+    # ALWAYS show daily trend, even when a date is selected
+    dates = sorted(max_people_per_day.keys())
+    chart_data["line_chart"]["labels"] = dates
+    chart_data["line_chart"]["datasets"].append({
+        "label": "Daily Customer Count",
+        "data": [max_people_per_day[date] for date in dates]
+    })
+
+    for date, hour_counts in combined_people_per_hour.items():
+        if hour_counts:
+            peak_hour = max(hour_counts, key=hour_counts.get)  # Find peak hour
+            peak_hours_per_day[date] = {"hour": peak_hour, "count": hour_counts[peak_hour]}
+
+    # Convert chart data to JSON for JavaScript
+    analytics_data = json_dumps(chart_data)
+
+    context = {
+        'active_page': 'statistics',
+        'url_': url_,
+        'link_text': link_text,
+        "grouped_data": grouped_data,
+        'max_people_per_day': dict(max_people_per_day),
+        "peak_hours_per_day": peak_hours_per_day,
+        "analytics_data": analytics_data,  # JSON data for charts
+        "available_dates": available_dates,  # All available dates for filter
+        "selected_date": selected_date,  # Currently selected date
+    }
+    return render(request, 'HtmlFiles/analytics.html', context)
+
 def analytics_tables(request):
     url_ = "/categories/"
     link_text = "Categories"
