@@ -30,21 +30,33 @@
 
     <!-- Data Display -->
     <div class="charts-wrapper">
-        <!-- Charts Container -->
-        <div class="charts-container">
-            <div class="chart-box">
+        <!-- Add heading to show when viewing all dates -->
+        {% if not selected_date %}
+            <h2 class="charts-heading">All Dates Data Overview</h2>
+        {% else %}
+            <h2 class="charts-heading">Data for {{ selected_date }}</h2>
+        {% endif %}
+        
+        <!-- Top Charts Container - 2 charts side by side -->
+        <div class="top-charts-container">
+            <div class="chart-box top-chart-box">
                 <h3 class="chart-title">Popular Dishes</h3>
                 <canvas id="barChart"></canvas>
             </div>
-            <div class="chart-box">
+            <div class="chart-box top-chart-box">
                 <h3 class="chart-title">Peak Hours</h3>
                 <canvas id="pieChart"></canvas>
             </div>
-            <div class="chart-box">
+        </div>
+        
+        <!-- Bottom Chart Container - Line chart full width -->
+        <div class="bottom-chart-container">
+            <div class="chart-box bottom-chart-box">
                 <h3 class="chart-title">Customer Trends</h3>
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
+        
         <!-- Error container -->
         <div id="error-container"></div>
     </div>
@@ -56,3 +68,4 @@
 <script src="{% static 'JavaScriptFiles/analytics.js' %}"></script>
 
 {% endblock body %}
+

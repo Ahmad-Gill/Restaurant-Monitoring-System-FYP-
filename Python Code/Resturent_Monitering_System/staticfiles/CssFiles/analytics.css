@@ -110,7 +110,7 @@ canvas {
 /* Sidebar Styles */
 .dates-container {
     width: 250px; /* Fixed sidebar width */
-    height: 50vh; /* 50% of viewport height */
+    height: auto; /* 50% of viewport height */
     position: fixed; /* Stick to the left */
     top: 50%; /* Center vertically */
     left: 0;
