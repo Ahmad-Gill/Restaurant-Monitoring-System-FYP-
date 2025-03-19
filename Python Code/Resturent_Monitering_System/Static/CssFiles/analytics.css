@@ -1,34 +1,44 @@
 @import url("../CssFiles/variables.css");
 
+/* Page Slider */
 .page-slider {
-  display: flex;
+  display: flex; 
   justify-content: center;
-  align-items: center;
-  margin: 20px 0;
-  padding: 10px;
+  align-items: center; 
+  margin: 20px 0; 
+  padding: 10px; 
   border-radius: 5px;
 }
 
+/* Default Button Styling */
 .slider-button {
-  text-decoration: none;
-  background-color: transparent;
+  text-decoration: none; 
+  background-color: transparent; 
   color: var(--headings);
-  padding: 10px 15px;
-  margin: 0 10px;
+  padding: 10px 15px; 
+  margin: 0 10px; 
   border: none;
-  border-bottom: 4px solid var(--headings);
-  border-radius: 0;
-  transition: color 0.3s, transform 0.2s, border-bottom-color 0.3s;
+  border-bottom: 4px solid transparent; /* Initially transparent */
+  transition: border-bottom-color 0.3s, transform 0.2s;
 }
 
+/* Hover Effect for Non-Selected Pages */
 .slider-button:hover {
-  border-bottom-color: var(--hover);
+  border-bottom-color: var(--hover); 
   transform: scale(1.05);
 }
 
-.page-slider .slider-button.active {
-  background: var(--accent-color);
+/* Keep Underline on the Active Page */
+.slider-button.active {
+  border-bottom-color: var(--hover); /* Keep the underline */
 }
+
+/* Remove Hover Effect from Selected Button */
+.slider-button.active:hover {
+  transform: none;
+}
+
+
 
 /* Charts wrapper */
 .charts-wrapper {
@@ -49,7 +59,7 @@
   border-radius: 8px;
 }
 
-/* Top Charts Container - Modified for 2 charts on top */
+/* Charts container */
 .top-charts-container {
   display: flex;
   justify-content: space-between;
@@ -57,12 +67,11 @@
   gap: 20px;
 }
 
-/* Bottom Chart Container - New container for line chart */
 .bottom-chart-container {
   margin: 30px 0;
 }
 
-/* Chart box styles - Updated for new layout */
+/* Chart box styles */
 .chart-box {
   flex: 1;
   background-color: #000;
@@ -72,20 +81,19 @@
   position: relative;
 }
 
-/* Top chart boxes */
+/* Chart heights */
 .top-chart-box {
-  height: 350px; /* Increased height */
+  height: 350px;
 }
 
-/* Bottom chart box */
 .bottom-chart-box {
-  height: 400px; /* Larger height for the line chart */
+  height: 400px;
 }
 
 .chart-title {
   text-align: center;
   color: white;
-  font-size: 16px; /* Slightly larger font */
+  font-size: 16px;
   margin: 0 0 15px 0;
   padding: 0 10px;
   font-weight: bold;
@@ -93,7 +101,7 @@
 
 canvas {
   width: 100% !important;
-  height: calc(100% - 30px) !important; /* Adjust for title */
+  height: calc(100% - 30px) !important;
   z-index: 1;
 }
 
@@ -125,70 +133,110 @@ canvas {
   margin: 0;
 }
 
-/* Media query for screens between 768px and 1200px */
+/* Maintain aspect ratio for charts */
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-height: calc(100% - 30px) !important;
+  aspect-ratio: 16/9;
+  z-index: 1;
+}
+
+/* Medium Screens (Tablets: 768px - 1200px) */
 @media (max-width: 1200px) {
   .top-charts-container {
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .chart-box {
-    width: 100%; /* Full width on medium screens */
-    margin-bottom: 20px;
+    width: 48%; /* 2 charts per row */
+    min-height: 280px; /* Prevents squishing */
   }
 
-  .top-chart-box {
-    height: 300px; /* Slightly smaller on medium screens */
+  .top-chart-box, .bottom-chart-box {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: 320px;
   }
 
-  .bottom-chart-box {
-    height: 350px; /* Slightly smaller on medium screens */
+  .main-container {
+    margin-left: 250px;
+    padding: 15px;
   }
 }
 
-/* Optional: Add media query for very small screens */
-@media (max-width: 767px) {
-  .chart-box {
-    width: 100%; /* Full width on smaller screens */
+/* Small Screens (Mobile: < 768px) */
+@media (max-width: 768px) {
+  .charts-wrapper {
+    padding: 10px;
   }
 
   .top-charts-container {
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
   }
 
-  .top-chart-box,
-  .bottom-chart-box {
-    height: 280px; /* Even smaller on mobile */
+  .chart-box {
+    width: 100%; /* 1 chart per row */
+    min-height: 250px; /* Prevents squishing */
   }
-}
 
-@media (max-width: 768px) {
-  /* Adjust breakpoint as needed */
+  .top-chart-box, .bottom-chart-box {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: 280px;
+  }
+
+  /* Adjust sidebar for small screens */
   .dates-container {
-    display: none !important;
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin-bottom: 20px;
+    border-radius: 8px;
   }
 
   .main-container {
     margin-left: 0;
+    padding: 10px;
   }
 }
 
-/* Sidebar Styles - FIXED to fit content */
+/* Extra Small Screens (< 480px) */
+@media (max-width: 480px) {
+  .page-slider {
+    flex-wrap: wrap;
+  }
+
+  .slider-button {
+    margin: 5px;
+    flex: 1 0 45%;
+  }
+
+  .chart-box {
+    max-height: 220px;
+  }
+}
+
+/* Sidebar Styles */
 .dates-container {
-  width: 250px; /* Fixed sidebar width */
-  height: auto; /* Auto height instead of fixed */
-  max-height: 80vh; /* Maximum height */
-  position: fixed; /* Stick to the left */
-  top: 50%; /* Center vertically */
+  width: 250px;
+  height: auto;
+  max-height: 80vh;
+  position: fixed;
+  top: 50%;
   left: 0;
-  transform: translateY(-50%); /* Adjust for exact centering */
-  background-color: black; /* Dark background */
-  color: white; /* White text */
+  transform: translateY(-50%);
+  background-color: black;
+  color: white;
   padding: 20px;
-  overflow-y: auto; /* Scroll if too many dates */
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
-  border-radius: 10px; /* Rounded edges */
-  display: flex; /* Added flex display */
-  flex-direction: column; /* Stack children vertically */
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Sidebar Header */
@@ -208,7 +256,7 @@ canvas {
   margin: 5px 0;
   text-decoration: none;
   color: white;
-  background: rgba(255, 255, 255, 0.1); /* Slight transparent effect */
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   transition: 0.3s;
   text-align: center;
@@ -227,20 +275,18 @@ canvas {
   font-weight: bold;
 }
 
-/* Adjust main content to fit next to sidebar */
+/* Adjust main content */
 .main-container {
-  margin-left: 270px; /* Make space for sidebar */
+  margin-left: 270px;
   padding: 20px;
 }
 
-
-/* Add a new class for the charts heading */
 .charts-heading {
-    color: white;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 8px;
-  }
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+}
