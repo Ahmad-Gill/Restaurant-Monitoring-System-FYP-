@@ -8,12 +8,12 @@
 
 <link href="{% static 'CssFiles/analytics.css' %}" rel="stylesheet">
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
-
+<link href="{% static 'CssFiles/analytics_tables.css' %}" rel="stylesheet">
 <h2 class="dashboard-title">General Analytics Report</h2>
 
 <div class="page-slider">
-    <h2><a href="{% url 'analytics_table' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
-    <h2><a href="{% url 'analytics' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+    <h2><a href="{% url 'analytics_table' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Statistics</a></h2>
+    <h2><a href="{% url 'analytics' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Visualization</a></h2>
 </div>
 
 <div class="main-container">
