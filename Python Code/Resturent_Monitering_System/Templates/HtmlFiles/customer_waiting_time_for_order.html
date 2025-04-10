@@ -1,4 +1,5 @@
 {% extends "HtmlFiles/Base.html" %}
+
 {% block title %}Customer Waiting Time for Order{% endblock title %}
 
 {% load static %}
@@ -6,7 +7,6 @@
 {% block home_active %}active{% endblock home_active %}
 
 {% block body %}
-
 <!-- Link to external CSS and JS files -->
 <link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
 <script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order.js' %}"></script>
@@ -21,41 +21,40 @@
 
 <div class="containerr">
     <h2>Customer Waiting Time for Order</h2>
-    <table class="waiting-time-table">
-        <thead>
-            <tr>
-                <th>Dining ID</th>
-                <th>Total AcupationTime</th>
-                <th>Waiting Time For Meal</th>
-                <th>Max People</th>
-                <th>Date</th>
-                <th>Image</th>
-                <th>Remove</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for time in waiting_times %}
-            <tr>
-                <td>{{ time.table_number }}</td>
-                <td>{{ time.total_time}} Minuts</td>
-                <td>{{ time.time_before_meal}} Minuts</td>
-                <td>{{ time.total_people|floatformat:0 }}</td>
 
-               
-                <td>{{ time.date }}</td>
-                <td>
-                    {% if time.visual_representation %}
-                        <img src="{{ time.visual_representation.url }}" alt="Customer Image" class="img-thumbnail">
-                    {% else %}
-                        No Image Available
-                    {% endif %}
-                </td>
-                <td><button class="btn btn-danger dell">Remove</button></td>
-
-
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Wrapper for the table to make it scrollable -->
+    <div class="waiting-time-table-wrapper">
+        <table class="waiting-time-table">
+            <thead>
+                <tr>
+                    <th>Dining ID</th>
+                    <th>Total AcupationTime</th>
+                    <th>Waiting Time For Meal</th>
+                    <th>Max People</th>
+                    <th>Date</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for time in waiting_times %}
+                <tr>
+                    <td data-label="Dining ID">{{ time.table_number }}</td>
+                    <td data-label="Total AcupationTime">{{ time.total_time }} Minuts</td>
+                    <td data-label="Waiting Time For Meal">{{ time.time_before_meal }} Minuts</td>
+                    <td data-label="Max People">{{ time.total_people|floatformat:0 }}</td>
+                    <td data-label="Date">{{ time.date }}</td>
+                    <td data-label="Image">
+                        {% if time.visual_representation %}
+                            <img src="{{ time.visual_representation.url }}" alt="Customer Image" class="img-thumbnail">
+                        {% else %}
+                            No Image Available
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div> <!-- End of table wrapper -->
 </div>
+
 {% endblock %}

@@ -10,8 +10,7 @@ html, body {
 }
 h1, h2, h3, h4, h5, h6 {
     color: var(--headings); /* Default color */
-    font-family: 'Dancing Script', cursive; /* Apply Dancing Script font */
-    font-style: italic; /* Italic for h2 */
+
 }
 html::-webkit-scrollbar, body::-webkit-scrollbar {
     display: none; /* Hide scrollbar */

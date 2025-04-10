@@ -46,7 +46,85 @@
 
 
 
+/* Wrapper for horizontal scrolling */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+}
 
+/* Styling the table */
+.waiting-time-table {
+    min-width: 100%;
+    table-layout: auto;
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Header Styling */
+.waiting-time-table th {
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    text-align: center;
+}
+
+/* Table Data Styling */
+.waiting-time-table td {
+    padding: 12px;
+    text-align: center;
+}
+
+/* Styling for Violations */
+.waiting-time-table td span {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+}
+
+.waiting-time-table .violation-apron {
+    color: green;
+}
+
+.waiting-time-table .violation-cap {
+    color: green;
+}
+
+.waiting-time-table .violation-no-apron {
+    color: red;
+}
+
+.waiting-time-table .violation-no-cap {
+    color: red;
+}
+
+
+
+
+
+
+
+
+
+
+
+.charts-wrapper {
+    background-color: rgba(0, 0, 0, 0.7); /* Black with 80% opacity */
+    color: white;
+    padding: 10px;
+    margin-left: 400px !important;
+    border-radius: 10px;
+    width: 69% !important; /* Adjust based on your layout */
+    margin: 20px auto; /* Centered container */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+    text-align: center;
+    
+}
 
 
 
@@ -115,5 +193,60 @@
     .img-thumbnail {
         width: 80px;
         height: 80px;
+    }
+}
+
+
+
+
+@media (max-width: 768px) {
+    .waiting-time-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 20px;
+        width: 100%; /* Ensure the wrapper takes full width */
+        display: block; /* Use block for better behavior */
+        overflow-y: auto; /* Ensure vertical scrolling is available */
+    }
+
+    .waiting-time-table {
+        width: 100%; /* Ensure the table spans the full width */
+        table-layout: auto; /* Let table width adjust according to content */
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .waiting-time-table th,
+    .waiting-time-table td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .waiting-time-table th {
+        font-size: 0; /* Hide header text */
+    }
+
+    .waiting-time-table td {
+        font-size: 12px;
+        overflow: hidden; /* Hide overflowed content */
+        text-overflow: ellipsis; /* Add ellipsis to truncated text */
+        white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+    /* This ensures each td is block-level for mobile screens */
+    .waiting-time-table td[data-label] {
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border-top: 1px solid #ddd;
+    }
+
+    /* Add labels before each td */
+    .waiting-time-table td[data-label]::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
     }
 }

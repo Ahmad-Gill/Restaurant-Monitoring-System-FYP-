@@ -1,6 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Function to update the selected date
+function updateSelectedDate(newDate) {
+    // Get the h2 element by its class name
+    const chartsHeading = document.querySelector('.charts-heading');
+    
+    // Check if there's a selected date or not
+    if (newDate) {
+        chartsHeading.textContent = `Data for ${newDate}`;
+    } else {
+        chartsHeading.textContent = 'All Dates Data Overview';
+    }
+}
+
     try {
         let groupedDataElement = document.getElementById("groupedData");
+        
         let jsonData = groupedDataElement.getAttribute("data-value");
         let groupedData = JSON.parse(jsonData);
         console.log("🟢 Parsed JSON:", groupedData);
@@ -45,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!selectedData) return null;
 
             return {
+               
                 totalTimeChunks: createChunks(selectedData.data.total_times, [10, 20, 30, 100]),
                 beforeMealChunks: createChunks(selectedData.data.waiting_times_before_meal, [5, 10, 15, 20, 100])
             };
@@ -65,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 pieChart.update();
             } else {
                 // Selected date view
+                updateSelectedDate(date);
                 let selectedData = getSelectedDateData(date);
                 if (!selectedData) {
                     console.error("❌ No data found for selected date:", date);
@@ -111,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (elements.length > 0) {
                         let clickedIndex = elements[0].index;
                         let clickedDate = barChart.data.labels[clickedIndex];
+                        updateSelectedDate(clickedDate);
                         updateCharts(clickedDate);
                     }
                 }

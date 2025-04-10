@@ -15,7 +15,23 @@
     <h2><a href="{% url 'analytics_table' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Statistics</a></h2>
     <h2><a href="{% url 'analytics' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Visualization</a></h2>
 </div>
-
+<style>
+    .top-charts-container {
+        background-color: black !important;
+      }
+      @media only screen and (max-width: 768px) {
+        .dates-container {
+            display: none !important;
+        }
+        .main-container {
+            display: block;
+            width: 80% !important;
+            margin: 0 auto; /* Centers the container */
+        }
+    }
+    
+    
+</style>
 <div class="main-container">
     
     <!-- Sidebar for Available Dates -->

@@ -44,6 +44,13 @@ class CustomerOrderSummary(models.Model):
         return f"Table {self.table_number} - {self.date}"
 
 
+class DressCodeEntry(models.Model):
+    date_key = models.CharField(max_length=20, unique=True)  # e.g., "20241126"
+    data = models.JSONField()  # time slot => list of violations (e.g., "no_apron", "no_cap")
+
+    def __str__(self):
+        return f"Dress Code Entry for {self.date_key}"
+
 
 class Visitor(models.Model):
     name = models.CharField(max_length=100)  

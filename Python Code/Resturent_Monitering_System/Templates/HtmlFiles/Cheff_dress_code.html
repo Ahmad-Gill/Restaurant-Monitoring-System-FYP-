@@ -1,0 +1,73 @@
+{% extends "HtmlFiles/Base.html" %}
+
+{% block title %}Chef's Dress Code{% endblock title %}
+
+{% load static %}
+
+{% block home_active %}active{% endblock home_active %}
+
+{% block body %}
+<!-- Link to external CSS and JS files -->
+
+<script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order.js' %}"></script>
+<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
+<link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
+
+<h2>Chef's Dress Code</h2>
+<div class="page-slider">
+   <h2> <a href="{% url 'Cheff_dress_code' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
+   <h2> <a href="{% url 'Cheff_dress_code_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+</div>
+
+<div class="containerr">
+    <h2>Chef's Dress Code by Time</h2>
+
+    <!-- Table for displaying dress code data -->
+    <div class="table-scroll">
+        <table class="waiting-time-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <!-- Dynamically create table headers for each time slot -->
+                    {% for time_slot in time_slots %}
+                        <th>{{ time_slot }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in dress_code_data %}
+                    <tr>
+                        <td>{{ entry.date_key }}</td>
+                        <!-- For each time slot, print the violations dynamically -->
+                        {% for time_slot in time_slots %}
+                            <td>
+                                {% with violation_data=None %}
+                                    {% for data in entry.data %}
+                                        {% if data.time_slot == time_slot %}
+                                            {% with violation_data=data.violations %}
+                                                {% for violation in violation_data %}
+                                                    {% if violation == "no_apron" %}
+                                                        ❌ No Apron<br>
+                                                    {% elif violation == "no_cap" %}
+                                                        ❌ No Cap<br>
+                                                    {% elif violation == "apron" %}
+                                                        ✅ Apron<br>
+                                                    {% elif violation == "cap" %}
+                                                        ✅ Cap<br>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endwith %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+
+{% endblock %}

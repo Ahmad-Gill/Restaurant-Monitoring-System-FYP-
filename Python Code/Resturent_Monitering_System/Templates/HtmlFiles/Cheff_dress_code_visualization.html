@@ -7,29 +7,17 @@
 
 {% block body %}
 <!-- External CSS -->
-
-
-<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
-<link href="{% static 'CssFiles/analytics_tables.css' %}" rel="stylesheet">
-<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
 <link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
 <link href="{% static 'CssFiles/customer_waiting_time_for_order_Visualization.css' %}" rel="stylesheet">
-<br>
-
-
+<link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
 
 <h2>Order Fulfillment Lead Time</h2>
 <div class="page-slider">
     <h2><a href="{% url 'waiting_time_for_order' %}" class="slider-button {% if active_page == 'statistics' %}eactiv{% endif %}">Statistics</a></h2>
     <h2><a href="{% url 'waiting_time_for_order_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
 </div>
-<div class="charts-wrapper">
-    {% if not selected_date %}
-    <h2 class="charts-heading">All Dates Data Overview</h2>
-{% else %}
-    <h2 class="charts-heading">Data for {{ selected_date }}</h2>
-{% endif %}
-    </div>
+
 <!-- Main Container -->
 <div class="main-container">
     
@@ -37,7 +25,7 @@
     <div class="dates-container ">
         <h3>Available Dates</h3>
         {% for date in available_dates %}
-            <a  class="date-link">{{ date }}</a>
+            <a href="?date={{ date }}" class="date-link {% if selected_date == date %}selected{% endif %}">{{ date }}</a>
         {% empty %}
             <p>No dates available</p>
         {% endfor %}
@@ -46,8 +34,8 @@
     <!-- Data Display -->
     <div class="containerr">
 
+
         <div class="charts-container">
-            
             <canvas id="waitingTimeChart1"></canvas>  <!-- Line Chart -->
             <canvas id="waitingTimeChart2"></canvas>  <!-- Bar Chart -->
         </div>

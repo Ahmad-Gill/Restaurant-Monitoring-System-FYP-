@@ -21,7 +21,7 @@ from .models import Visitor
 
 
 # Importing models for database interactions
-from .models import GeneratedValue, Categories, CustomerOrderWaitingTime,CustomerOrderSummary
+from .models import GeneratedValue, Categories, CustomerOrderWaitingTime,CustomerOrderSummary,DressCodeEntry
 
 
 
@@ -53,6 +53,7 @@ import subprocess
 from django.core.mail import send_mail
 from roboflow import Roboflow
 from collections import defaultdict
+from datetime import datetime
 
 
 
@@ -65,7 +66,104 @@ from collections import defaultdict
 
 # **************************************************************
 
+def process_Chef_videos(video_folder, output_json,model_person,model_uniform):
+    results = {}
 
+    def extract_date_and_time(video_name):
+        """Extracts date (YYYYMMDD) and time (HHAM/PM) from the filename."""
+        try:
+            print(f"Extracting date and time from: {video_name}")
+            parts = video_name.split('_')
+
+            if len(parts) < 4 or not parts[3].isdigit() or len(parts[3]) != 14:
+                raise ValueError(f"Invalid timestamp format in filename: {video_name}")
+
+            date_part = parts[3][:8]  # Extract YYYYMMDD
+            time_part = parts[3][8:10]  # Extract HH
+
+            hour = int(time_part)
+            print(f"Extracted date: {date_part}, hour: {hour}")
+
+            if hour == 0:
+                time_label = "12AM"
+            elif hour < 12:
+                time_label = f"{hour}AM"
+            elif hour == 12:
+                time_label = "12PM"
+            else:
+                time_label = f"{hour - 12}PM"
+
+            return date_part, time_label
+
+        except Exception as e:
+            print(f"Error extracting date and time from {video_name}: {e}")
+            return "Unknown", "Unknown"
+
+    for video_file in os.listdir(video_folder):
+        print(f"Processing video: {video_file}")
+        video_path = os.path.join(video_folder, video_file)
+        video = cv2.VideoCapture(video_path)
+
+        if not video.isOpened():
+            print(f"Error accessing video: {video_file}")
+            continue
+
+        frames = []
+        total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+        random_indices = random.sample(range(total_frames), min(5, total_frames))
+
+        for idx in random_indices:
+            video.set(cv2.CAP_PROP_POS_FRAMES, idx)
+            success, frame = video.read()
+            if not success:
+                print(f"Failed to read frame at index {idx}")
+                continue
+
+            temp_filename = f"temp_frame_{idx}.jpg"
+            cv2.imwrite(temp_filename, frame)
+
+            prediction = model_person.predict(temp_filename, confidence=40).json()
+            print(f"Person model prediction: {prediction}")
+
+            frames.append(temp_filename)
+
+        video.release()
+
+        if not frames:
+            print(f"No frames extracted from {video_file}")
+            continue
+
+        resultant_classes = set()
+
+        for frame_path in frames:
+            print(f"Predicting on frame: {frame_path}")
+            prediction_json = model_uniform.predict(frame_path).json()
+            predictions = prediction_json.get("predictions", [])
+
+            for pred in predictions:
+                class_pred = pred.get("predicted_classes", [])
+                resultant_classes.update(class_pred)
+
+            os.remove(frame_path)
+
+        final_classes = list(resultant_classes) if resultant_classes else ["No predictions found"]
+        print(f"Final predicted classes for {video_file}: {final_classes}")
+
+        date_label, time_label = extract_date_and_time(video_file)
+
+        if date_label not in results:
+            results[date_label] = {}
+        results[date_label][time_label] = final_classes
+
+    with open(output_json, "w") as json_file:
+        json.dump(results, json_file, indent=4)
+        print(f"Results saved to {output_json}")
+
+    print("Processing complete!")
+
+def convert_to_24hr(time_str):
+    # Convert time in AM/PM format to 24-hour format
+    return datetime.strptime(time_str, '%I%p').strftime('%H:%M')
 
 
 # --------------------------------------------Draw general rectanges around the person or food---------------------
@@ -761,6 +859,28 @@ def final_chef_preprocessing1(request):
 def final_chef_preprocessing2(request):
     url_ = "/categories/"
     link_text = "Categories"
+    video_folder = "kitchen_video_sample" 
+    output_json = "food_results.json" 
+
+    # Initialize models
+    rf_person = Roboflow(api_key="lYHebHEC1o6mAZUSM8fM")
+    model_person = rf_person.workspace("fyp1-r4zvo").project("kitchen1").version(1).model
+
+    rf_uniform = Roboflow(api_key="lYHebHEC1o6mAZUSM8fM")
+    model_uniform = rf_uniform.workspace("fyp1-r4zvo").project("kitchen-mgw9t").version(2).model
+    video_folder = os.path.join(settings.MEDIA_ROOT, 'videos', 'chef_videos')      # Path to the chef_videos folder inside media
+    # process_Chef_videos(video_folder, output_json,model_person,model_uniform)
+    with open("food_results.json", "r") as file:
+        data = json.load(file)
+
+# Insert into the database
+    for date_key, schedule in data.items():
+        obj, created = DressCodeEntry.objects.update_or_create(
+            date_key=date_key,
+            defaults={"data": schedule}
+        )
+        print(f"{'Created' if created else 'Updated'} DressCodeEntry for {date_key}")
+    code_done=True
     context = {
             'url_': url_,
             'link_text': link_text,
@@ -1170,7 +1290,7 @@ def analytics_tables(request):
 
 # step 15 
 
-#----function to show how many time a customer ait for fod --------------------------------
+#----function to show how many time a customer wait for food --------------------------------
 def customer_waiting_time_for_order(request):
     url_ = "/categories/"  
     link_text = "Categories"
@@ -1209,28 +1329,63 @@ def customer_waiting_time_for_order_Visualization(request):
     }
     return render(request, "HtmlFiles/customer_waiting_time_for_order_Visualization.html", context) 
 
+# step 16
 
-#-------------TO be used later  --------------------------------
-def checks(request):
+#----function to show the dress code check --------------------------------
+
+def Cheff_dress_code(request):
     url_ = "/categories/"  
     link_text = "Categories"
+    dress_code_entries = DressCodeEntry.objects.all()
+    dress_code_data = []
+    time_slots = set() 
+
+    for entry in dress_code_entries:
+        if entry.data:
+            formatted_data = [{'time_slot': time_slot, 'violations': violations} 
+                              for time_slot, violations in entry.data.items()]
+            
+            for time_slot in entry.data.keys():
+                time_slots.add(time_slot)
+            dress_code_data.append({
+                'date_key': entry.date_key,
+                'data': formatted_data
+            })
+    time_slots = sorted(time_slots, key=lambda x: convert_to_24hr(x))
     context = {
-        'active_page': 'statistics', 
+                'url_': url_,
+        'link_text': link_text,
+        'dress_code_data': dress_code_data, 
+        'time_slots': time_slots ,
+         "active_page": "statistics",
+    }
+    return render(request, 'HtmlFiles/Cheff_dress_code.html', context)
+
+def Cheff_dress_code_Visualization(request):
+    url_ = "/categories/"  
+    link_text = "Categories"
+    waiting_times = CustomerOrderWaitingTime.objects.all()
+    data_by_date = defaultdict(lambda: {"waiting_times_before_meal": [], "total_times": []})
+    available_dates = set() 
+
+    for time in waiting_times:
+        date_str = time.date.strftime("%Y-%m-%d")
+        available_dates.add(date_str)
+        data_by_date[date_str]["waiting_times_before_meal"].append(time.time_before_meal)
+        data_by_date[date_str]["total_times"].append(time.total_time)
+    grouped_data = [{"date": date, "data": data} for date, data in data_by_date.items()]
+    grouped_data_json = json.dumps(grouped_data)  # Convert to JSON
+    selected_date = request.GET.get("date")
+    filtered_data = next((entry for entry in grouped_data if entry["date"] == selected_date), None)
+
+    context = {
         'url_': url_,
-        'link_text': link_text, 
+        'link_text': link_text,
+        "grouped_data": grouped_data_json,  # JSON Data
+        "available_dates": sorted(available_dates),  # All Dates
+        "selected_date": selected_date,  # Current Selected Date
+        "active_page": "Visualization",
     }
-    return render(request, "HtmlFiles/check.html",context)
+    return render(request, 'HtmlFiles/Cheff_dress_code_visualization.html', context)
 
-def staff_info(request):
-    context = {
-        "time": "kahdsl",
-    }
-    return render(request, "HtmlFiles/staff.html", context)
 
-def monitoring(request):
-    context = {
-        "time": "kahdsl",
-    }
-    return render(request, "HtmlFiles/monitoring.html", context)
-
- 

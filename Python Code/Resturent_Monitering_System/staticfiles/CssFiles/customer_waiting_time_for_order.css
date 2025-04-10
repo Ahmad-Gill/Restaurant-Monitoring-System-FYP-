@@ -117,3 +117,98 @@
         height: 80px;
     }
 }
+
+
+/* Wrapper for horizontal scrolling */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+/* Styling the table */
+.waiting-time-table {
+    min-width: 100%;
+    table-layout: auto;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Header Styling */
+.waiting-time-table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    text-align: center;
+}
+
+/* Table Data Styling */
+.waiting-time-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+/* Styling for Violations */
+.waiting-time-table td span {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+}
+
+.waiting-time-table .violation-apron {
+    color: green;
+}
+
+.waiting-time-table .violation-cap {
+    color: green;
+}
+
+.waiting-time-table .violation-no-apron {
+    color: red;
+}
+
+.waiting-time-table .violation-no-cap {
+    color: red;
+}
+
+/* Hover effect for rows */
+.waiting-time-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Styling for the container */
+.containerr {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.containerr h2 {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.charts-wrapper {
+    background-color: rgba(0, 0, 0, 0.7); /* Black with 80% opacity */
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 300px; /* Adjust based on your layout */
+    margin-bottom: 20px; /* Centered container */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+    text-align: center;
+    
+}

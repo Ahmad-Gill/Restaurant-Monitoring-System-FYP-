@@ -8,8 +8,7 @@ html, body {
 @media (min-width: 900px) {
     h1, h2, h3, h4, h5, h6 {
         color: var(--headings); 
-        font-family: 'Dancing Script', cursive;
-        font-style: italic; 
+
     }
 
     .diagonal-image-container {
@@ -81,7 +80,7 @@ html, body {
         top: 10%;            
         left: 0%;           
         z-index: 2;         
-        font-size: 24px;    
+        font-size: 14px !important;    
         color: var(--headings);        
     }
 }
@@ -145,3 +144,8 @@ html, body {
 
 
 
+
+.page-heading {       
+    font-size: 1px !important;    
+    color: var(--headings);        
+}

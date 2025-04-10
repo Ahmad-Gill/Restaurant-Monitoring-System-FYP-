@@ -12,7 +12,6 @@ urlpatterns = [
     # Analytics
     path('analytics/', views.analytics, name='analytics'),
     path('analytics_table/', views.analytics_tables, name='analytics_table'),
-    path('checks/', views.checks, name='checks'),
 
     # Categories
     path('categories/', views.categories, name='categories'),
@@ -39,6 +38,10 @@ urlpatterns = [
     # General Preprocessing
     path('preprocessing/', views.preprocessing, name='preprocessing'),
     path('preprocessing_1', views.preprocessing_1, name='preprocessing_1'), 
+
+
+     path('Cheff_dress_code/', views.Cheff_dress_code, name='Cheff_dress_code'),
+     path('Cheff_dress_code_Visualization/', views.Cheff_dress_code_Visualization, name='Cheff_dress_code_Visualization'),
 ]
 
 # Serve media files in DEBUG mode

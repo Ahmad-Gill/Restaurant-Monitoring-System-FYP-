@@ -53,7 +53,6 @@
   color: white;
   text-align: center;
   margin-bottom: 20px;
-  font-size: 1.5rem;
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 8px;
@@ -128,10 +127,6 @@ canvas {
   height: 40px;
 }
 
-.error-message p {
-  font-size: 16px;
-  margin: 0;
-}
 
 /* Maintain aspect ratio for charts */
 canvas {
@@ -239,15 +234,6 @@ canvas {
   flex-direction: column;
 }
 
-/* Sidebar Header */
-.dates-container h3 {
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  border-bottom: 2px solid white;
-  padding-bottom: 10px;
-}
 
 /* Date Links */
 .date-link {
@@ -285,7 +271,6 @@ canvas {
   color: white;
   text-align: center;
   margin-bottom: 20px;
-  font-size: 1.5rem;
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 8px;
