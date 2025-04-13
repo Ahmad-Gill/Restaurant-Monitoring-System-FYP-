@@ -1364,28 +1364,122 @@ def Cheff_dress_code(request):
 def Cheff_dress_code_Visualization(request):
     url_ = "/categories/"  
     link_text = "Categories"
-    waiting_times = CustomerOrderWaitingTime.objects.all()
-    data_by_date = defaultdict(lambda: {"waiting_times_before_meal": [], "total_times": []})
-    available_dates = set() 
+    error_message = None
+    chart_data_json = '{}'
+    
+    try:
+        # Get all dress code entries
+        dress_code_entries = DressCodeEntry.objects.all()
+        available_dates = set()
 
-    for time in waiting_times:
-        date_str = time.date.strftime("%Y-%m-%d")
-        available_dates.add(date_str)
-        data_by_date[date_str]["waiting_times_before_meal"].append(time.time_before_meal)
-        data_by_date[date_str]["total_times"].append(time.total_time)
-    grouped_data = [{"date": date, "data": data} for date, data in data_by_date.items()]
-    grouped_data_json = json.dumps(grouped_data)  # Convert to JSON
-    selected_date = request.GET.get("date")
-    filtered_data = next((entry for entry in grouped_data if entry["date"] == selected_date), None)
+        # Get all available dates for filtering
+        for entry in dress_code_entries:
+            if entry.date_key:
+                available_dates.add(entry.date_key)
+    
+        # Get selected date from request
+        selected_date = request.GET.get("date")
+        
+        # Initialize violation ranges with proper thresholds
+        violation_ranges = {
+            'No Violations': 0,
+            '1-2 Violations': 0,
+            '3-5 Violations': 0,
+            '6-8 Violations': 0,
+            '9-10 Violations': 0,
+            'More than 10 Violations': 0
+        }
+
+        # Process data for selected date or all dates
+        if selected_date:
+            entries_to_process = DressCodeEntry.objects.filter(date_key=selected_date)
+            if not entries_to_process.exists():
+                error_message = f"No dress code data found for the date: {selected_date}"
+        else:
+            entries_to_process = dress_code_entries
+
+        if not error_message and not dress_code_entries.exists():
+            error_message = "No dress code data available in the system. Please add dress code data first."
+
+        # Initialize time data structure
+        time_data = []
+        
+        # Process each entry if no errors occurred
+        if not error_message:
+            # First pass: collect all time slots and initialize counts
+            time_slot_data = {}
+            
+            for entry in entries_to_process:
+                if entry.data and isinstance(entry.data, dict):
+                    for time_slot, violations in entry.data.items():
+                        # Calculate violation count
+                        if isinstance(violations, list):
+                            violation_count = len(violations)
+                        else:
+                            try:
+                                violation_count = int(violations)
+                            except (TypeError, ValueError):
+                                violation_count = 0
+                        
+                        # Update or initialize time slot data
+                        if time_slot not in time_slot_data:
+                            time_slot_data[time_slot] = {'violations': violation_count}
+                        else:
+                            time_slot_data[time_slot]['violations'] = max(
+                                time_slot_data[time_slot]['violations'],
+                                violation_count
+                            )
+
+            # Second pass: create time_data and update violation ranges
+            for time_slot, data in sorted(time_slot_data.items(), key=lambda x: convert_to_24hr(x[0])):
+                violation_count = data['violations']
+                
+                # Add to time data
+                time_data.append({
+                    'time_slot': time_slot,
+                    'violations': violation_count
+                })
+                
+                # Update violation ranges based on threshold
+                if violation_count == 0:
+                    violation_ranges['No Violations'] += 1
+                elif violation_count <= 2:
+                    violation_ranges['1-2 Violations'] += 1
+                elif violation_count <= 5:
+                    violation_ranges['3-5 Violations'] += 1
+                elif violation_count <= 8:
+                    violation_ranges['6-8 Violations'] += 1
+                elif violation_count <= 10:
+                    violation_ranges['9-10 Violations'] += 1
+                else:
+                    violation_ranges['More than 10 Violations'] += 1
+
+            # Prepare chart data
+            chart_data = {
+                'date_key': selected_date if selected_date else "All Dates",
+                'time_data': time_data,
+                'violation_ranges': violation_ranges
+            }
+
+            # Convert to JSON for template
+            chart_data_json = json.dumps(chart_data)
+
+    except Exception as e:
+        error_message = f"Error processing dress code data: {str(e)}"
+        print(f"Error in Cheff_dress_code_Visualization: {str(e)}")
+        chart_data_json = '{}'
 
     context = {
         'url_': url_,
         'link_text': link_text,
-        "grouped_data": grouped_data_json,  # JSON Data
-        "available_dates": sorted(available_dates),  # All Dates
-        "selected_date": selected_date,  # Current Selected Date
-        "active_page": "Visualization",
+        'chart_data_json': chart_data_json,
+        'available_dates': sorted(list(available_dates)) if available_dates else [],
+        'selected_date': selected_date,
+        'error_message': error_message,
+        'active_page': 'Visualization'
     }
+    
     return render(request, 'HtmlFiles/Cheff_dress_code_visualization.html', context)
+
 
 

@@ -1,0 +1,325 @@
+/* -------------------- Loading and Error Message Styles -------------------- */
+#chart-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.spinner {
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 5px solid #ffffff;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#chart-error-container {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    margin: 10px auto;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+    display: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    margin: 20px auto;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.no-data-message {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    padding: 20px;
+    margin: 20px auto;
+    border: 1px solid #bee5eb;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+    font-size: 1.1rem;
+}
+/* -------------------- Chart Containers -------------------- */
+.visualization-container {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+}
+
+.black-charts-container {
+    background-color: black;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 25px 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.chart-section {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 20px;
+    height: 400px;
+    position: relative;
+}
+
+.chart-title {
+    color: white;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.chart-wrapper {
+    height: calc(100% - 40px);
+    position: relative;
+}
+
+/* Canvas Styles */
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+/* Add hover effect for charts */
+canvas:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+/* -------------------- Responsive Adjustments -------------------- */
+@media (max-width: 1200px) {
+    .main-container {
+        margin-left: 270px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dates-container {
+        display: none !important;
+    }
+
+    .main-container {
+        flex-direction: column;
+        margin-left: 0;
+        width: 100%;
+        padding: 0 10px;
+    }
+    
+    .visualization-container {
+        padding: 10px;
+    }
+
+    .black-charts-container {
+        padding: 15px;
+        gap: 20px;
+    }
+
+    .chart-section {
+        height: 300px;
+        padding: 15px;
+    }
+
+    canvas {
+        min-height: 200px;
+    }
+}
+
+/* -------------------- Sidebar ---------------------- */
+.dates-container {
+    width: 250px;
+    padding: 10px;
+    background: black;
+    text-align: center;
+    flex-shrink: 0;
+    margin-left: 1px;
+    border-radius: 8px;
+}
+
+/* -------------------- Main Content ---------------------- */
+.main-container {
+    display: flex;
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 40px;
+    box-sizing: border-box;
+    overflow: hidden;
+    align-items: flex-start;
+}
+
+/* -------------------- Date Links ---------------------- */
+.date-link {
+    display: block;
+    padding: 12px 16px;
+    margin: 6px 0;
+    text-decoration: none;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.date-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    cursor: pointer;
+}
+
+.date-link.selected {
+    background: white;
+    color: black;
+    font-weight: bold;
+}
+
+/* -------------------- Loading and error states ---------------------- */
+#chart-loading, #chart-error-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    padding: 15px;
+    margin: 0;
+}
+
+#chart-loading {
+    width: 80%;
+    max-width: 300px;
+}
+
+@media (max-width: 768px) {
+    .error-message,
+    .no-data-message,
+    #chart-error-container {
+        width: 95%;
+        padding: 15px;
+        margin: 10px auto;
+    }
+    
+    #chart-loading {
+        width: 80%;
+        max-width: 300px;
+    }
+}
+
+/* -------------------- Page Slider ---------------------- */
+.page-slider {
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    margin: 20px 0; 
+    padding: 10px; 
+    border-radius: 5px;
+}
+
+.slider-button {
+    text-decoration: none; 
+    background-color: transparent; 
+    color: var(--headings);
+    padding: 10px 15px; 
+    margin: 0 10px; 
+    border: none;
+    border-bottom: 4px solid var(--headings);
+    border-radius: 0; 
+    transition: color 0.3s, transform 0.2s, border-bottom-color 0.3s;
+}
+
+.slider-button:hover{
+    border-bottom-color: var(--hover); 
+    transform: scale(1.05);
+}
+
+/* Keep Underline on the Active Page */
+.slider-button.active {
+    border-bottom-color: var(--hover); /* Keep the underline */
+  }
+  
+  /* Remove Hover Effect from Selected Button */
+  .slider-button.active:hover {
+    transform: none;
+  }
+
+/* -------------------- Charts Heading ---------------------- */
+.charts-wrapper {
+    padding: 25px;  /* Increased from 20px */
+    background-color: transparent;
+    border-radius: 8px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Charts heading */
+  .charts-heading {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Add black background to the outer chart container */
+.charts-outer-container {
+    background-color: black;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.charts-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+#violationsBarChart,
+#violationsPieChart {
+    width: 80% !important;
+    max-width: 400px;
+    height: auto;
+}
+
