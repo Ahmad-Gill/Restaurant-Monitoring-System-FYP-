@@ -1,5 +1,5 @@
 {% extends "HtmlFiles/Base.html" %}
-{% block title %}Customer Waiting Time for Order{% endblock title %}
+{% block title %}Chef Dress Code Visualization{% endblock title %}
 
 {% load static %}
 
@@ -7,22 +7,21 @@
 
 {% block body %}
 <!-- External CSS -->
-<link href="{% static 'CssFiles/customer_waiting_time_for_order.css' %}" rel="stylesheet">
-<link href="{% static 'CssFiles/customer_waiting_time_for_order_Visualization.css' %}" rel="stylesheet">
+<link href="{% static 'CssFiles/cheff_dress_code_visualization.css' %}" rel="stylesheet">
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
 
-<h2>Order Fulfillment Lead Time</h2>
+<h2>Chef Dress Code Violations</h2>
 <div class="page-slider">
-    <h2><a href="{% url 'waiting_time_for_order' %}" class="slider-button {% if active_page == 'statistics' %}eactiv{% endif %}">Statistics</a></h2>
-    <h2><a href="{% url 'waiting_time_for_order_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+    <h2><a href="{% url 'Cheff_dress_code' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
+    <h2><a href="{% url 'Cheff_dress_code_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
 </div>
 
 <!-- Main Container -->
 <div class="main-container">
     
     <!-- Sidebar for Available Dates -->
-    <div class="dates-container ">
+    <div class="dates-container">
         <h3>Available Dates</h3>
         {% for date in available_dates %}
             <a href="?date={{ date }}" class="date-link {% if selected_date == date %}selected{% endif %}">{{ date }}</a>
@@ -32,22 +31,67 @@
     </div>
 
     <!-- Data Display -->
-    <div class="containerr">
-
-
-        <div class="charts-container">
-            <canvas id="waitingTimeChart1"></canvas>  <!-- Line Chart -->
-            <canvas id="waitingTimeChart2"></canvas>  <!-- Bar Chart -->
+    <div class="container">
+        {% if error_message %}
+        <!-- Server-side Error Message -->
+        <div class="error-message">
+            <p><strong>Error:</strong> {{ error_message }}</p>
         </div>
+        {% endif %}
+
+        <div class="charts-wrapper">
+            <!-- Add heading to show when viewing all dates -->
+            {% if not selected_date %}
+                <h2 class="charts-heading">All Dates Data Overview</h2>
+            {% else %}
+                <h2 class="charts-heading">Data for {{ selected_date }}</h2>
+            {% endif %}
+        
+        <!-- Loading Indicator -->
+        <div id="chart-loading">
+            <div class="spinner"></div>
+            <p>Loading charts...</p>
+        </div>
+        
+        <!-- Client-side Error Message Container -->
+        <div id="chart-error-container"></div>
+        
+        {% if not available_dates %}
+        <!-- No dates available message -->
+        <div class="no-data-message">
+            <p><strong>No data available.</strong> There are no dates with dress code data in the system.</p>
+            <p>Please add dress code data before using the visualization feature.</p>
+        </div>
+        {% elif not chart_data_json or chart_data_json == '{}' or chart_data_json == '[]' %}
+        <!-- No data for selected date message -->
+        <div class="no-data-message">
+            <p><strong>No visualization data available</strong> for the selected date: {{ selected_date|default:"None" }}</p>
+            <p>Please select another date from the sidebar or check if the dress code data is properly formatted.</p>
+        </div>
+        {% else %}
+        <!-- Charts Outer Container with black background -->
+        <div class="charts-outer-container">
+            <!-- Charts Container -->
+            <div class="charts-container">
+                <canvas id="violationsBarChart"></canvas>  <!-- Bar Chart -->
+                <canvas id="violationsPieChart"></canvas>  <!-- Pie Chart -->
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
-<div id="groupedData" data-value='{{ grouped_data|safe }}'></div>
+<!-- Chart data container for JS to access -->
+<div id="chart_data_json" data-value='{{ chart_data_json|safe }}'></div>
+
+<!-- Status indicators for JS -->
+<div id="visualization-status" 
+     data-has-error="{% if error_message %}true{% else %}false{% endif %}"
+     data-error-message="{{ error_message|default:'' }}"
+     data-has-data="{% if chart_data_json and chart_data_json != '{}' and chart_data_json != '[]' %}true{% else %}false{% endif %}"
+     style="display: none;"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-
-
-<script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order_Visualization.js' %}"></script>
+<script src="{% static 'JavaScriptFiles/cheff_dress_code_visualization.js' %}"></script>
 
 {% endblock %}
