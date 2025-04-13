@@ -18,7 +18,24 @@
    <h2> <a href="{% url 'Cheff_dress_code' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
    <h2> <a href="{% url 'Cheff_dress_code_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
 </div>
+<style>
+    /* General Table Styling */
+    .waiting-time-table_ {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: auto; /* Let columns adjust automatically */
+    }
 
+
+
+    /* Target the 'Date' column directly by using a class */
+    .date-column {
+        width: 250px;  /* Adjust width for 'Date' column */
+        white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+
+</style>
 <div class="containerr">
     <h2>Chef's Dress Code by Time</h2>
 
@@ -27,20 +44,20 @@
         <table class="waiting-time-table">
             <thead>
                 <tr>
-                    <th>Date</th>
+                    <th class="date-column">Date</th>
                     <!-- Dynamically create table headers for each time slot -->
                     {% for time_slot in time_slots %}
-                        <th>{{ time_slot }}</th>
+                        <th class="date-column">{{ time_slot }}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for entry in dress_code_data %}
                     <tr>
-                        <td>{{ entry.date_key }}</td>
+                        <td class="date-column">{{ entry.date_key }}</td>
                         <!-- For each time slot, print the violations dynamically -->
                         {% for time_slot in time_slots %}
-                            <td>
+                            <td class="date-column">
                                 {% with violation_data=None %}
                                     {% for data in entry.data %}
                                         {% if data.time_slot == time_slot %}

@@ -1,6 +1,6 @@
 from django.contrib import admin
 import markupsafe
-from .models import CustomerOrderWaitingTime, CustomerOrderServingTime,Visitor,CustomerOrderSummary,DressCodeEntry
+from .models import CustomerOrderWaitingTime, CustomerOrderServingTime,Visitor,CustomerOrderSummary,DressCodeEntry,TableCleanliness
 
 
 # Register your models here.
@@ -32,4 +32,5 @@ class GeneratedValueAdmin(admin.ModelAdmin):
     admin.site.register(Visitor)
     admin.site.register(CustomerOrderSummary)
     admin.site.register(DressCodeEntry)
+    admin.site.register(TableCleanliness)
     

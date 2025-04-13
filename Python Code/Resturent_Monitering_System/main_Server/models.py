@@ -50,6 +50,13 @@ class DressCodeEntry(models.Model):
 
     def __str__(self):
         return f"Dress Code Entry for {self.date_key}"
+    
+class TableCleanliness(models.Model):
+    date = models.DateField(unique=True)  # Unique date
+    data = models.JSONField(default=dict)  # Store dictionary of time and cleanliness status
+
+    def __str__(self):
+        return f"{self.date} - {self.data}"
 
 
 class Visitor(models.Model):

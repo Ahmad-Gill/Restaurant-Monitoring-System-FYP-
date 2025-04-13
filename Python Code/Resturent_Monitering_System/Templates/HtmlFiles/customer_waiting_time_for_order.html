@@ -12,23 +12,88 @@
 <script src="{% static 'JavaScriptFiles/customer_waiting_time_for_order.js' %}"></script>
 <link href="{% static 'CssFiles/variables.css' %}" rel="stylesheet">
 
-
 <h2>Order Fulfillment Lead Time</h2>
 <div class="page-slider">
-   <h2> <a href="{% url 'waiting_time_for_order' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
-   <h2> <a href="{% url 'waiting_time_for_order_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
+    <h2><a href="{% url 'waiting_time_for_order' %}" class="slider-button {% if active_page == 'statistics' %}active{% endif %}">Statistics</a></h2>
+    <h2><a href="{% url 'waiting_time_for_order_Visualization' %}" class="slider-button {% if active_page == 'Visualization' %}active{% endif %}">Visualization</a></h2>
 </div>
 
 <div class="containerr">
-    <h2>Customer Waiting Time for Order</h2>
+    <h2>Table Cleanness Check</h2>
+    <div class="table-scroll">
+        <style>
+            /* General Table Styling */
+            .waiting-time-table_ {
+                border-collapse: collapse;
+                width: 100%;
+                table-layout: auto; /* Let columns adjust automatically */
+            }
+        
+            .waiting-time-table_ th,
+            .waiting-time-table_ td {
+                border: none; /* Remove borders */
+                border-top: 2px solid #000; /* Horizontal top border */
+                border-bottom: 1px solid #ccc; /* Horizontal bottom border */
+                padding: 8px;
+                text-align: center;
+            }
+        
+            /* Target the 'Date' column directly by using a class */
+            .date-column {
+                width: 250px;  /* Adjust width for 'Date' column */
+                white-space: nowrap; /* Prevent text from wrapping */
+            }
+        
+            /* Optional: Styling for cells with cleanliness status */
+            .clean-cell {
+                background-color: #7ed87e; /* Darker green */
+            }
+        
+            .dirty-cell {
+                background-color: #f30808; /* Light red */
+            }
+        
+            .no-data-cell {
+                background-color: #7ed87e; /* Darker green */
+            }
+        </style>
+        
 
-    <!-- Wrapper for the table to make it scrollable -->
+        <!-- Cleanliness Data Table -->
+        <table class="waiting-time-table_" id="table1">
+            <thead>
+                <tr>
+                    <th class="date-column">Date</th>
+                    {% for time_slot in time_slots %}
+                        <th>{{ time_slot }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in table_data %}
+                    <tr>
+                        <td class="date-column">{{ entry.date }}</td>
+                        {% for status in entry.data %}
+                            <td class="{% if status == 'Clean!!' %}clean-cell{% elif status == 'Dirty!!' %}dirty-cell{% else %}no-data-cell{% endif %}">
+                                <!-- No text, just color for cleanliness status -->
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Customer Waiting Time Data Table -->
+<div class="containerr">
+    <h2>Customer Waiting Time for Order</h2>
     <div class="waiting-time-table-wrapper">
         <table class="waiting-time-table">
             <thead>
                 <tr>
                     <th>Dining ID</th>
-                    <th>Total AcupationTime</th>
+                    <th>Total Occupation Time</th>
                     <th>Waiting Time For Meal</th>
                     <th>Max People</th>
                     <th>Date</th>
@@ -37,24 +102,24 @@
             </thead>
             <tbody>
                 {% for time in waiting_times %}
-                <tr>
-                    <td data-label="Dining ID">{{ time.table_number }}</td>
-                    <td data-label="Total AcupationTime">{{ time.total_time }} Minuts</td>
-                    <td data-label="Waiting Time For Meal">{{ time.time_before_meal }} Minuts</td>
-                    <td data-label="Max People">{{ time.total_people|floatformat:0 }}</td>
-                    <td data-label="Date">{{ time.date }}</td>
-                    <td data-label="Image">
-                        {% if time.visual_representation %}
-                            <img src="{{ time.visual_representation.url }}" alt="Customer Image" class="img-thumbnail">
-                        {% else %}
-                            No Image Available
-                        {% endif %}
-                    </td>
-                </tr>
+                    <tr>
+                        <td data-label="Dining ID">{{ time.table_number }}</td>
+                        <td data-label="Total Occupation Time">{{ time.total_time }} Minutes</td>
+                        <td data-label="Waiting Time For Meal">{{ time.time_before_meal }} Minutes</td>
+                        <td data-label="Max People">{{ time.total_people|floatformat:0 }}</td>
+                        <td data-label="Date">{{ time.date }}</td>
+                        <td data-label="Image">
+                            {% if time.visual_representation %}
+                                <img src="{{ time.visual_representation.url }}" alt="Customer Image" class="img-thumbnail">
+                            {% else %}
+                                No Image Available
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div> <!-- End of table wrapper -->
+    </div>
 </div>
 
 {% endblock %}

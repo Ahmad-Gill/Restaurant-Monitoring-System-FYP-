@@ -21,7 +21,7 @@ from .models import Visitor
 
 
 # Importing models for database interactions
-from .models import GeneratedValue, Categories, CustomerOrderWaitingTime,CustomerOrderSummary,DressCodeEntry
+from .models import GeneratedValue, Categories, CustomerOrderWaitingTime,CustomerOrderSummary,DressCodeEntry,TableCleanliness
 
 
 
@@ -165,7 +165,52 @@ def convert_to_24hr(time_str):
     # Convert time in AM/PM format to 24-hour format
     return datetime.strptime(time_str, '%I%p').strftime('%H:%M')
 
+def check_table_cleanliness(image_path,model):
+    # Initialize Roboflow API and load model
 
+
+    # Open the image
+    image = Image.open(image_path)
+
+    # Convert to .jpg/.jpeg if it's in another format
+    if not image_path.lower().endswith((".jpg", ".jpeg")):
+        compressed_image_path = "compressed_image.jpg"
+        image.save(compressed_image_path, "JPEG", quality=30)
+    else:
+        compressed_image_path = image_path
+
+    # Get predictions from the model
+    prediction_json = model.predict(compressed_image_path, confidence=10, overlap=0).json()
+    predictions = prediction_json.get('predictions', [])
+
+    # Check predictions to determine cleanliness
+    if len(predictions) > 1:
+        return "Dirty!!"
+    else:
+        return "Clean!!"
+def save_tableCleannessCheck_result(result, readable_hour, date_match):
+    json_filename = "table_cleanness_check.json"
+
+    # Load existing data if the file exists
+    if os.path.exists(json_filename):
+        with open(json_filename, "r") as f:
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                data = {}
+    else:
+        data = {}
+
+    # Make sure the date key exists
+    if date_match not in data:
+        data[date_match] = {}
+
+    # Save or update the result for the hour
+    data[date_match][readable_hour] = result.capitalize()
+
+    # Write back to the file
+    with open(json_filename, "w") as f:
+        json.dump(data, f, indent=4)
 # --------------------------------------------Draw general rectanges around the person or food---------------------
 def draw_predictions(image_path: str, predictions: dict, output_folder: str):
     img = cv2.imread(image_path)
@@ -303,6 +348,8 @@ def initialize_model(api_key: str, project_name: str, version: int):
 #----------------------------main function taht controll both person and food dectons and combine them together------------------------------------------------
 def process_folder(input_folder: str, output_folder: str):
     print(f"Processing folder: {input_folder}")
+    date_match = f"{re.search(r'(\d{8})', input_folder).group()[:4]}-{re.search(r'(\d{8})', input_folder).group()[4:6]}-{re.search(r'(\d{8})', input_folder).group()[6:]}"
+    print(date_match)
     total_frame_count = 0
     frame_count_for_meal = 0
     max_people = 0
@@ -314,6 +361,9 @@ def process_folder(input_folder: str, output_folder: str):
     new_entry_id = 1  
     hour_mapping = {f"{h:02}": f"{(h-1)%12+1}{'AM' if h < 12 else 'PM'}" for h in range(24)}       #to extract time from image paths 
     hour_mapping["00"] = "12AM" 
+    rf = Roboflow(api_key="lYHebHEC1o6mAZUSM8fM")
+    project = rf.workspace("fyp1-r4zvo").project("new1-bbvvs")
+    model_table_cleanCheck = project.version(1).model
     model = initialize_model(api_key="mT8SBwz3f0nxhicDovAc", project_name="person_detection-efko2", version=1)
     image_paths = [os.path.join(input_folder, img) for img in os.listdir(input_folder) if img.endswith(".png")]
     image_paths.sort(key=natural_sort_key)  # Ensure numerical sorting
@@ -325,6 +375,10 @@ def process_folder(input_folder: str, output_folder: str):
     predictions_folder = os.path.join(output_folder, os.path.basename(input_folder) + "_predictions")
     os.makedirs(predictions_folder, exist_ok=True)
     json_file = os.path.join(os.path.dirname(input_folder), f"{os.path.basename(input_folder)}.json")
+    json_filename = "table_cleanness_check.json"
+    if os.path.exists(json_filename):
+        open(json_filename, "w").close()
+
     if os.path.exists(json_file):
         with open(json_file, "r") as f:
             existing_data = json.load(f)
@@ -392,7 +446,13 @@ def process_folder(input_folder: str, output_folder: str):
                 total_frame_count=frame_count_for_meal
             if tracking_active:                            # it only counts the total time like when the people sits in the able to when they leave 
                 total_frame_count += 1
-        prediction_image_path = draw_predictions(image_path, predictions, predictions_folder)    #save all the images only for testing 
+        
+        else:
+            result = check_table_cleanliness(image_path,model_table_cleanCheck)
+            print(result,readable_hour)
+            save_tableCleannessCheck_result(result, readable_hour, date_match)
+
+    prediction_image_path = draw_predictions(image_path, predictions, predictions_folder)    #save all the images only for testing 
     if food_folder_created:           #this only  work when there no person in the entire data then this code runs and made the json file 
         with open(json_file, "w") as f:
             json.dump(existing_data, f, indent=4)
@@ -1020,111 +1080,144 @@ def preprocessing_2(request):
     os.environ["QT_SCALE_FACTOR"] = "1"
     os.environ["QT_SCREEN_SCALE_FACTORS"] = "1"
     raw_folder = r"D:\FYP - Copy\preprocessing\Video Preprocessing\New folder"
-    video_dict, formatted_date = get_video_paths_by_time(raw_folder)
-    if not video_dict:
-        return
-    output_folder=process_all_videos_and_save_frames(list(video_dict.values()))    # call to convert video to frame 
-    with open("output_path.txt", "r") as file: 
-        saved_path = file.read().strip()
-    output_folder=process_images(saved_path)
-    with open("output_path.txt", "r") as file:
-        saved_path = file.read().strip()
-    grids_folder = os.path.join(os.getcwd(), 'media', 'videos')
-    grids_file_path = os.path.join(grids_folder, 'grids.txt')      #get save grids 
-    with open(grids_file_path, 'r') as file:
-        grids_data_str = file.read().strip()
-    grids_data_str = grids_data_str.strip("'")
-    grids_data = ast.literal_eval(grids_data_str)
-    grid_numbers = [int(num) for num in grids_data]
-    output_folder=create_cropped_grid_video(saved_path, grid_numbers=grid_numbers)   # use that grids to crop the video 
-    with open("output_path.txt", "r") as file:
-        saved_path = file.read().strip()
+    # video_dict, formatted_date = get_video_paths_by_time(raw_folder)
+    # if not video_dict:
+    #     return
+    # output_folder=process_all_videos_and_save_frames(list(video_dict.values()))    # call to convert video to frame 
+    # with open("output_path.txt", "r") as file: 
+    #     saved_path = file.read().strip()
+    # output_folder=process_images(saved_path)
+    # with open("output_path.txt", "r") as file:
+    #     saved_path = file.read().strip()
+    # grids_folder = os.path.join(os.getcwd(), 'media', 'videos')
+    # grids_file_path = os.path.join(grids_folder, 'grids.txt')      #get save grids 
+    # with open(grids_file_path, 'r') as file:
+    #     grids_data_str = file.read().strip()
+    # grids_data_str = grids_data_str.strip("'")
+    # grids_data = ast.literal_eval(grids_data_str)
+    # grid_numbers = [int(num) for num in grids_data]
+    # output_folder=create_cropped_grid_video(saved_path, grid_numbers=grid_numbers)   # use that grids to crop the video 
+    # with open("output_path.txt", "r") as file:
+    #     saved_path = file.read().strip()
 
-    output_folder=process_images(saved_path)      #enhance the frames 
-    with open("output_path.txt", "r") as file:
-        saved_path = file.read().strip()
-    input_folder = "20241126_enhancement1_cropped_enhancement1"
-    preprocessed_folder = os.path.join(os.getcwd(), 'media', 'preprocessed')
-    if os.path.exists(preprocessed_folder):
-        shutil.rmtree(preprocessed_folder)                  # Deletes the entire folder and its contents
-    os.makedirs(preprocessed_folder, exist_ok=True)
-    process_folder(input_folder, preprocessed_folder)
+    # output_folder=process_images(saved_path)      #enhance the frames 
+    # with open("output_path.txt", "r") as file:
+    #     saved_path = file.read().strip()
+    # input_folder = "20241126_enhancement1_cropped_enhancement1"
+    # preprocessed_folder = os.path.join(os.getcwd(), 'media', 'preprocessed')
+    # if os.path.exists(preprocessed_folder):
+    #     shutil.rmtree(preprocessed_folder)                  # Deletes the entire folder and its contents
+    # os.makedirs(preprocessed_folder, exist_ok=True)
+    # process_folder(input_folder, preprocessed_folder)
 
 
     # ------------------Save the data in Tables ----------------------------------------------------
-    json_file_path = os.path.abspath("20241126_enhancement1_cropped_enhancement1.json")
-    image_folder = os.path.abspath("20241126_enhancement1_cropped_enhancement1_food")
+#     json_file_path = os.path.abspath("20241126_enhancement1_cropped_enhancement1.json")
+#     image_folder = os.path.abspath("20241126_enhancement1_cropped_enhancement1_food")
 
-    if os.path.exists(json_file_path):   #read the json file that made after applying model
-        with open(json_file_path, "r") as json_file:
-            data = json.load(json_file)
+#     if os.path.exists(json_file_path):   #read the json file that made after applying model
+#         with open(json_file_path, "r") as json_file:
+#             data = json.load(json_file)
 
-        match = re.search(r"(\d{8})", os.path.basename(json_file_path))
-        if match:
-            date_str = match.group(1)
-            formatted_date = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}"    #store the date in a formate of date time 
-        with open(date_file_path, "w") as date_file:
-            date_file.write(formatted_date)
-        if os.path.exists(date_file_path):
-            with open(date_file_path, "r") as date_file:
-                saved_date = date_file.read().strip()
+#         match = re.search(r"(\d{8})", os.path.basename(json_file_path))
+#         if match:
+#             date_str = match.group(1)
+#             formatted_date = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}"    #store the date in a formate of date time 
+#         with open(date_file_path, "w") as date_file:
+#             date_file.write(formatted_date)
+#         if os.path.exists(date_file_path):
+#             with open(date_file_path, "r") as date_file:
+#                 saved_date = date_file.read().strip()
 
-        image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+#         image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
-        for key, value in data.items():
-            table_number = int(key)
-            time_before_meal_value = value.get("time_before_meal", 0.0)
-            total_time = value.get("total_time", 0.0)
-            total_people = value.get("total_people", 0.0)
-                                                                 #Store customer waiting time for meal 
-            order = CustomerOrderWaitingTime.objects.create(
-                table_number=table_number,
-                total_time=total_time,
-                total_people=total_people,
-                time_before_meal=time_before_meal_value,
-                date=saved_date
-            )
+#         for key, value in data.items():
+#             table_number = int(key)
+#             time_before_meal_value = value.get("time_before_meal", 0.0)
+#             total_time = value.get("total_time", 0.0)
+#             total_people = value.get("total_people", 0.0)
+#                                                                  #Store customer waiting time for meal 
+#             order = CustomerOrderWaitingTime.objects.create(
+#                 table_number=table_number,
+#                 total_time=total_time,
+#                 total_people=total_people,
+#                 time_before_meal=time_before_meal_value,
+#                 date=saved_date
+#             )
 
-            if image_files:
-                random_image = random.choice(image_files)
-                image_path = os.path.join(image_folder, random_image)
-                with open(image_path, "rb") as img_file:
-                    order.visual_representation.save(random_image, File(img_file))  #for feature selection of image storage 
-            order.save()
-        total_people = 0
-        people_per_hour = {}
-        meals = {}
-    for table_id, details in data.items():
-        table_number = int(table_id)
-        total_people += details.get("total_people", 0)
+#             if image_files:
+#                 random_image = random.choice(image_files)
+#                 image_path = os.path.join(image_folder, random_image)
+#                 with open(image_path, "rb") as img_file:
+#                     order.visual_representation.save(random_image, File(img_file))  #for feature selection of image storage 
+#             order.save()
+#         total_people = 0
+#         people_per_hour = {}
+#         meals = {}
+#     for table_id, details in data.items():
+#         table_number = int(table_id)
+#         total_people += details.get("total_people", 0)
 
-        for hour, count in details.get("total_people_per_hour", {}).items():
-            people_per_hour[hour] = people_per_hour.get(hour, 0) + count   #get all the people per hours for entire day 
+#         for hour, count in details.get("total_people_per_hour", {}).items():
+#             people_per_hour[hour] = people_per_hour.get(hour, 0) + count   #get all the people per hours for entire day 
 
-        for meal, count in details.get("meal", {}).items():
-            meals[meal] = meals.get(meal, 0) + count    #get all the meal   for entire day 
+#         for meal, count in details.get("meal", {}).items():
+#             meals[meal] = meals.get(meal, 0) + count    #get all the meal   for entire day 
 
 
-    image_path = None
-    if os.path.exists(image_folder):
-        image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        selected_image = next((img for img in image_files if f"best_food_output_{date_str}.jpg" in img), None) #for feature selection of image storage 
-        if not selected_image and image_files:
-            selected_image = random.choice(image_files)
-        if selected_image:
-            image_path = os.path.join(image_folder, selected_image)
- #Store General Analytics
-    order_summary = CustomerOrderSummary.objects.create(
-        table_number=table_number,
-        total_people=total_people,   #total people in entire day
-        people_per_hour=people_per_hour,   #total people according to hour in entire day
-        meals=meals,   #total meal  in entire day
-        date=formatted_date
-    )
+#     image_path = None
+#     if os.path.exists(image_folder):
+#         image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+#         selected_image = next((img for img in image_files if f"best_food_output_{date_str}.jpg" in img), None) #for feature selection of image storage 
+#         if not selected_image and image_files:
+#             selected_image = random.choice(image_files)
+#         if selected_image:
+#             image_path = os.path.join(image_folder, selected_image)
+#  #Store General Analytics
+#     order_summary = CustomerOrderSummary.objects.create(
+#         table_number=table_number,
+#         total_people=total_people,   #total people in entire day
+#         people_per_hour=people_per_hour,   #total people according to hour in entire day
+#         meals=meals,   #total meal  in entire day
+#         date=formatted_date
+#     )
 
-    if image_path:
-        with open(image_path, "rb") as img_file:
-            order_summary.meal_image.save(random_image, File(img_file))
+#     if image_path:
+#         with open(image_path, "rb") as img_file:
+#             order_summary.meal_image.save(random_image, File(img_file))
+
+
+
+
+
+
+
+
+    json_filename = "table_cleanness_check.json"
+
+    with open(json_filename, "r") as f:
+        try:
+            file_data = json.load(f)
+            print("Loaded data:", file_data)  # Debugging: Check the loaded data
+        except json.JSONDecodeError as e:
+            print(f"Error loading JSON: {e}")
+            file_data = {}
+
+    # Process and save the data
+    for date_str, hour_data in file_data.items():
+        print(f"Processing date: {date_str}, hour_data: {hour_data}")  # Debugging
+        
+        # Convert string date to datetime object
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+
+        # Create or update the database entry
+        obj, created = TableCleanliness.objects.get_or_create(date=date_obj)
+        print(f"Created: {created}, obj: {obj}")  # Debugging to check if the object is created/updated
+
+        # Update the data field with the hour_data
+        obj.data.update(hour_data)
+        obj.save()  # Save to the database
+
 
 
         
@@ -1292,16 +1385,35 @@ def analytics_tables(request):
 
 #----function to show how many time a customer wait for food --------------------------------
 def customer_waiting_time_for_order(request):
-    url_ = "/categories/"  
+    url_ = "/categories/"
     link_text = "Categories"
-    waiting_times = CustomerOrderWaitingTime.objects.all()  # Fetch all records
+    waiting_times = CustomerOrderWaitingTime.objects.all()
+
+    cleanliness_data = TableCleanliness.objects.all()
+    table_data = []
+    time_slots = [
+        "12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM",
+        "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM",
+        "8PM", "9PM", "10PM", "11PM"
+    ]
+
+    for obj in cleanliness_data:
+        row = {
+            "date": obj.date.strftime('%Y-%m-%d'),
+            "data": [obj.data.get(slot, "No data") for slot in time_slots]
+        }
+        table_data.append(row)
+
     context = {
         'url_': url_,
-        'link_text': link_text, 
+        'link_text': link_text,
         'waiting_times': waiting_times,
-        'active_page': 'statistics', 
+        'time_slots': time_slots,
+        'table_data': table_data,
+        'active_page': 'statistics',
     }
     return render(request, 'HtmlFiles/customer_waiting_time_for_order.html', context)
+
 def customer_waiting_time_for_order_Visualization(request):
     url_ = "/categories/"  
     link_text = "Categories"
