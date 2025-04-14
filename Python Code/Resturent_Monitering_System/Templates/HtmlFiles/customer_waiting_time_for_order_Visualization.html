@@ -30,10 +30,7 @@
     <h2 class="charts-heading">Data for {{ selected_date }}</h2>
 {% endif %}
     </div>
-<!-- Main Container -->
 <div class="main-container">
-    
-    <!-- Sidebar for Available Dates -->
     <div class="dates-container ">
         <h3>Available Dates</h3>
         {% for date in available_dates %}
@@ -42,14 +39,12 @@
             <p>No dates available</p>
         {% endfor %}
     </div>
-
-    <!-- Data Display -->
     <div class="containerr">
 
         <div class="charts-container">
             
-            <canvas id="waitingTimeChart1"></canvas>  <!-- Line Chart -->
-            <canvas id="waitingTimeChart2"></canvas>  <!-- Bar Chart -->
+            <canvas id="waitingTimeChart1"></canvas> 
+            <canvas id="waitingTimeChart2"></canvas> 
         </div>
     </div>
 </div>

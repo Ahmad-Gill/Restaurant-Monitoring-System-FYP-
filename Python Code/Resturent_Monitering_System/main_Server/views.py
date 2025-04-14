@@ -5,51 +5,25 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.urls import reverse
 import base64
-from django.core.files import File
-import ast
-from django.db.models import ExpressionWrapper
-from django.db.models import Count
-from django.db.models import F
-from django.db.models import DurationField
-from django.utils.timezone import now
-from django.db.models import Sum
-from django.http import StreamingHttpResponse
-import time
-from django.db.models import Count, Max
 from .forms import ContactForm
-from .models import Visitor
-
-
-# Importing models for database interactions
-from .models import GeneratedValue, Categories, CustomerOrderWaitingTime,CustomerOrderSummary,DressCodeEntry,TableCleanliness
-
-
-
-# Modules for image processing and visualization
+from .models import  Categories, CustomerOrderWaitingTime,CustomerOrderSummary,DressCodeEntry,TableCleanliness
 import cv2
 import matplotlib.pyplot as plt
+from django.core.files import File
+import ast
 import numpy as np
-from PIL import Image
 
-# Modules for file handling and storage
+from PIL import Image
 from io import BytesIO
 from django.core.files.storage import FileSystemStorage
 from pathlib import Path
 from django.conf import settings
-
-# Modules for miscellaneous tasks such as creating unique IDs, handling JSON data, etc.
-import uuid
 import json
 from json import dumps as json_dumps
 import random
 import re
-
-# Modules for file and directory management
 import os
 import shutil
-
-# Subprocess module for running system commands if required
-import subprocess
 from django.core.mail import send_mail
 from roboflow import Roboflow
 from collections import defaultdict
@@ -68,9 +42,7 @@ from datetime import datetime
 
 def process_Chef_videos(video_folder, output_json,model_person,model_uniform):
     results = {}
-
     def extract_date_and_time(video_name):
-        """Extracts date (YYYYMMDD) and time (HHAM/PM) from the filename."""
         try:
             print(f"Extracting date and time from: {video_name}")
             parts = video_name.split('_')
@@ -78,12 +50,9 @@ def process_Chef_videos(video_folder, output_json,model_person,model_uniform):
             if len(parts) < 4 or not parts[3].isdigit() or len(parts[3]) != 14:
                 raise ValueError(f"Invalid timestamp format in filename: {video_name}")
 
-            date_part = parts[3][:8]  # Extract YYYYMMDD
-            time_part = parts[3][8:10]  # Extract HH
-
+            date_part = parts[3][:8]
+            time_part = parts[3][8:10]
             hour = int(time_part)
-            print(f"Extracted date: {date_part}, hour: {hour}")
-
             if hour == 0:
                 time_label = "12AM"
             elif hour < 12:
@@ -96,16 +65,13 @@ def process_Chef_videos(video_folder, output_json,model_person,model_uniform):
             return date_part, time_label
 
         except Exception as e:
-            print(f"Error extracting date and time from {video_name}: {e}")
             return "Unknown", "Unknown"
 
     for video_file in os.listdir(video_folder):
-        print(f"Processing video: {video_file}")
         video_path = os.path.join(video_folder, video_file)
         video = cv2.VideoCapture(video_path)
 
         if not video.isOpened():
-            print(f"Error accessing video: {video_file}")
             continue
 
         frames = []
@@ -116,82 +82,53 @@ def process_Chef_videos(video_folder, output_json,model_person,model_uniform):
             video.set(cv2.CAP_PROP_POS_FRAMES, idx)
             success, frame = video.read()
             if not success:
-                print(f"Failed to read frame at index {idx}")
                 continue
 
             temp_filename = f"temp_frame_{idx}.jpg"
             cv2.imwrite(temp_filename, frame)
 
             prediction = model_person.predict(temp_filename, confidence=40).json()
-            print(f"Person model prediction: {prediction}")
-
             frames.append(temp_filename)
-
         video.release()
-
         if not frames:
-            print(f"No frames extracted from {video_file}")
             continue
-
         resultant_classes = set()
 
         for frame_path in frames:
-            print(f"Predicting on frame: {frame_path}")
             prediction_json = model_uniform.predict(frame_path).json()
             predictions = prediction_json.get("predictions", [])
 
             for pred in predictions:
                 class_pred = pred.get("predicted_classes", [])
                 resultant_classes.update(class_pred)
-
             os.remove(frame_path)
-
         final_classes = list(resultant_classes) if resultant_classes else ["No predictions found"]
-        print(f"Final predicted classes for {video_file}: {final_classes}")
-
         date_label, time_label = extract_date_and_time(video_file)
-
         if date_label not in results:
             results[date_label] = {}
         results[date_label][time_label] = final_classes
-
     with open(output_json, "w") as json_file:
         json.dump(results, json_file, indent=4)
-        print(f"Results saved to {output_json}")
-
-    print("Processing complete!")
-
+#------------------------------------------------Convert time in AM/PM format to 24-hour format-----------------------------
 def convert_to_24hr(time_str):
-    # Convert time in AM/PM format to 24-hour format
     return datetime.strptime(time_str, '%I%p').strftime('%H:%M')
-
+#-------------------------------------------------------return result of image either dirty 0r clean-------------------
 def check_table_cleanliness(image_path,model):
-    # Initialize Roboflow API and load model
-
-
-    # Open the image
     image = Image.open(image_path)
-
-    # Convert to .jpg/.jpeg if it's in another format
     if not image_path.lower().endswith((".jpg", ".jpeg")):
         compressed_image_path = "compressed_image.jpg"
         image.save(compressed_image_path, "JPEG", quality=30)
     else:
         compressed_image_path = image_path
-
-    # Get predictions from the model
     prediction_json = model.predict(compressed_image_path, confidence=10, overlap=0).json()
     predictions = prediction_json.get('predictions', [])
-
-    # Check predictions to determine cleanliness
     if len(predictions) > 1:
         return "Dirty!!"
     else:
         return "Clean!!"
+#--------------------------------------------------check the previous data and store the new data if it is unique in cheff dress code-------------
 def save_tableCleannessCheck_result(result, readable_hour, date_match):
     json_filename = "table_cleanness_check.json"
-
-    # Load existing data if the file exists
     if os.path.exists(json_filename):
         with open(json_filename, "r") as f:
             try:
@@ -200,15 +137,9 @@ def save_tableCleannessCheck_result(result, readable_hour, date_match):
                 data = {}
     else:
         data = {}
-
-    # Make sure the date key exists
     if date_match not in data:
         data[date_match] = {}
-
-    # Save or update the result for the hour
     data[date_match][readable_hour] = result.capitalize()
-
-    # Write back to the file
     with open(json_filename, "w") as f:
         json.dump(data, f, indent=4)
 # --------------------------------------------Draw general rectanges around the person or food---------------------
@@ -235,9 +166,6 @@ def draw_predictions(image_path: str, predictions: dict, output_folder: str):
     output_path = os.path.join(output_folder, os.path.basename(image_path))
     cv2.imwrite(output_path, img)    
     return output_path
-
-
-
 # --------------------------------------------Draw Specific rectangles around the food---------------------
 def draw_food_boxes_on_image(image_path, predictions):
     print(f"Drawing food boxes on image: {image_path}")
@@ -251,9 +179,6 @@ def draw_food_boxes_on_image(image_path, predictions):
         cv2.rectangle(img, (x1, y1 - label_size[1] - 5), (x1 + label_size[0], y1 + 5), (0, 255, 0), cv2.FILLED)
         cv2.putText(img, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
     return img
-
-
-
 # ----------------------------------------------------------------how many times each class appears in the image------------
 def process_food_image(image_path, model):
     predictions = model.predict(image_path, confidence=10, overlap=30).json()
@@ -263,10 +188,6 @@ def process_food_image(image_path, model):
     for p in predictions['predictions']:
         results[p['class']] += 1
     return results, predictions
-
-
-
-
 # ---------------------------------------------------Check if the new image has higher count for a certain food item than the existing image------------
 def should_update_best_food_image(existing_results, new_results):
     if not existing_results:
@@ -275,9 +196,6 @@ def should_update_best_food_image(existing_results, new_results):
         if new_count > existing_results.get(food_item, 0):
             return True
     return False
-
-
-
 # -----------------------------------------------------------------Main function for food detection------------
 def food_detection_main(folder_path):
     rf = Roboflow(api_key="mT8SBwz3f0nxhicDovAc")
@@ -306,15 +224,10 @@ def food_detection_main(folder_path):
     print(f"Final food detection results: {dict(best_food_results)}")
     print("Food detection complete.")
     return dict(best_food_results)
-
 # -----------------------------------------------------------------person dection--------------
 def perform_detection(model, image_path: str):
     predictions = model.predict(image_path, confidence=10, overlap=30).json()
     return predictions
-
-
-
-
 # ----------------------------------------------------------------COunt people and food --------------------------------
 def count_classes(predictions: dict):
     person_count = 0
@@ -327,24 +240,15 @@ def count_classes(predictions: dict):
         elif class_name == "meal" and confidence > 50:  # Count only if confidence > 50%
             meal_count += 1
     return person_count, meal_count
-
-
-
 # -----------------------------------------------------------------sort Image Paths --------------------------------
 def natural_sort_key(path):
     return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', os.path.basename(path))]
-
-
-
-
 # -----------------------------------------------------------------initialize Person dection model --------------------------------
 def initialize_model(api_key: str, project_name: str, version: int):
     rf = Roboflow(api_key=api_key)
     project = rf.workspace().project(project_name)
     model = project.version(version).model
     return model
-
-
 #----------------------------main function taht controll both person and food dectons and combine them together------------------------------------------------
 def process_folder(input_folder: str, output_folder: str):
     print(f"Processing folder: {input_folder}")
@@ -458,9 +362,6 @@ def process_folder(input_folder: str, output_folder: str):
             json.dump(existing_data, f, indent=4)
         print(f"Final JSON saved at {json_file}.")
     print("All frames processed successfully. Exiting.")
-
-
-
 # ----------------------------------------------------------------Check the fame quality in terms of brightness,sharpnessand contrast----------
 def calculate_frame_quality(frame):
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -469,7 +370,6 @@ def calculate_frame_quality(frame):
     contrast = np.std(frame)  # Contrast
     quality_score = laplacian_var * 0.5 + brightness * 0.3 + contrast * 0.2
     return quality_score
-
 # -----------------------------------------------------------------Select the best frame for each minute in the video-----------
 def convert_video_to_one_best_frame_per_minute(frames, output_folder=None):
     if not frames:
@@ -486,8 +386,6 @@ def convert_video_to_one_best_frame_per_minute(frames, output_folder=None):
     if best_frame is None:
         return None
     return best_frame
-
-
 # -----------------------------------------------------------------Crop the frames to create a grid frames-----------
 def create_cropped_grid_video(input_folder, grid_numbers=[1, 2, 3], grid_size=(20, 20)):
     input_folder = Path(input_folder).resolve()
@@ -525,9 +423,6 @@ def create_cropped_grid_video(input_folder, grid_numbers=[1, 2, 3], grid_size=(2
     #     pass
 
     return output_folder
-
-
-
 # -----------------------------------------------------------------resize 6 times greater the images using OpenCV-----------
 def process_images(input_folder):
     input_folder = Path(input_folder).resolve()
@@ -551,9 +446,6 @@ def process_images(input_folder):
     #     pass
     
     return output_folder
-
-
-
 # -----------------------------------------------------------------Extract date from video-----------
 def extract_date_from_video_path(video_path):
     filename = os.path.basename(video_path)
@@ -562,10 +454,6 @@ def extract_date_from_video_path(video_path):
     if match:
         return match.group(1)
     return "unknown_date"
-
-
-
-
 # -----------------------------------------------------------------Main function for vidoe to frames conversion Process all videos and save frames-----------
 def process_all_videos_and_save_frames(video_paths):
     all_selected_frames = []
@@ -632,10 +520,6 @@ def process_all_videos_and_save_frames(video_paths):
         all_selected_frames.extend(best_frames)
     print(f"Frames saved successfully in folder: {output_folder}")
     return output_folder
-
-
-
-
 # -----------------------------------draw 20*20 grids with index --------------------------------
 def apply_grids(frame, grid_size=(20, 20)):
     h, w = frame.shape[:2]
@@ -649,11 +533,6 @@ def apply_grids(frame, grid_size=(20, 20)):
             cv2.putText(frame, f'Grid {grid_num}', (tl_x + 5, tl_y + 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
     return frame
-
-
-
-
-
 # -----------------------------------------------------------------Display frame with grids-----------
 def display_frame_with_grids(video_path, grid_size=(20, 20)):
     if not os.path.isfile(video_path):
@@ -676,10 +555,6 @@ def display_frame_with_grids(video_path, grid_size=(20, 20)):
     except Exception as e:
         print(f"Error saving the frame: {e}")
         return None
-
-
-
-
 # ---------------------extract only first video to varify thhat the selected vidoe is same----------------------------------------------------------------
 def get_first_video(folder_path, valid_extensions=(".dav", ".mp4", ".avi", ".mkv")):
     files = [f for f in os.listdir(folder_path) if f.endswith(valid_extensions)]
@@ -688,9 +563,6 @@ def get_first_video(folder_path, valid_extensions=(".dav", ".mp4", ".avi", ".mkv
         return None
     first_video = sorted(files)[0]
     return os.path.join(folder_path, first_video)
-
-
-
 # ---------------------extract date from video path  and save paths in a directory ----------------------------------------------------------------
 def get_video_paths_by_time(raw_folder_path):
     video_files = [f for f in os.listdir(raw_folder_path) if f.endswith(('.mp4', '.avi', '.mkv', '.dav'))]
@@ -709,9 +581,6 @@ def get_video_paths_by_time(raw_folder_path):
     with open(json_filename, "w") as file:
         json.dump(video_dict, file, indent=4)
     return video_dict, formatted_date
-
-
-
 #----------------------------------------------------------------Extract frame from fram a video to show -----
 def extract_frame(video_path, output_image_path):
     video_capture = cv2.VideoCapture(video_path)
@@ -727,6 +596,9 @@ def extract_frame(video_path, output_image_path):
         video_capture.release()
         return False
 
+
+
+
 # **************************************************************
 
 # Main Functions
@@ -737,12 +609,11 @@ def extract_frame(video_path, output_image_path):
 
 
 
-#----   1 Step:
 
+#----   1 Step:
 # -----------------------------Loading page to load all the things properly --------------------------------
 def loading_view(request):
     return render(request, 'HtmlFiles/loading.html')
-
 #    2 Step:
 # -----------------------------  Any one can accesss this main page  --------------------------------
 def main(request):
@@ -750,11 +621,6 @@ def main(request):
     error = False
     ip_address = request.META.get('REMOTE_ADDR')
     visitor_name = f"Visitor IP Adress {ip_address}"
-    Visitor.objects.create(name=visitor_name, visit_time=now())
-    visitors = Visitor.objects.values('name').annotate(
-        count=Count('name'),
-        latest_visit_time=Max('visit_time')
-    ).order_by('latest_visit_time')
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -782,16 +648,11 @@ def main(request):
         'success': success,
         'error': error,
         "count": 2,
-        "time": "kahdsl",
         "url_": "/home/", 
         "link_text": "Home",
-         'visitors': visitors,
     }
     return render(request, 'HtmlFiles/main.html', context)
-
-
 #     3 Step:
-
 # -----------------------------Login / logout--------------------------------
 def login(request):
     if request.method == 'POST':
@@ -808,8 +669,6 @@ def login(request):
 def logoutUser(request):
     logout(request)
     return redirect(reverse('main')) 
-
-
 #        4 Step:
 # ------------------------------Categories Section  ------------------------------
 def categories(request):
@@ -825,10 +684,7 @@ def categories(request):
     }
 
     return render(request, 'HtmlFiles/categories.html', context)
-
 #     5  Step:
-
-
 # ------------------------------Chuse people / cheff category for preprocessing   ------------------------------
 def cheff_and_people(request):
     url_ = "/categories/"  
@@ -838,9 +694,6 @@ def cheff_and_people(request):
         'link_text': link_text, 
     }
     return render(request, 'HtmlFiles/Cheff&people.html',context)
-
-
-
 #     6  Step:
 #----------------------------------------------------------------Cheff Preprocessing   ----------------------------------------------------------------
 def chef_preprocessing(request):
@@ -880,13 +733,8 @@ def chef_preprocessing(request):
         }
 
     return render(request, 'HtmlFiles/chef_preprocessing.html', context)
-
-
-
 #     7  Step:
-
-
-# ------------------------------Not finalized in progress    ------------------------------
+# ------------------------------chef_preprocessing  part 2   ------------------------------
 def final_chef_preprocessing1(request):
     url_ = "/categories/"
     link_text = "Categories"
@@ -914,26 +762,21 @@ def final_chef_preprocessing1(request):
         'frame_image': frame_image, 
     }
     return render(request, 'HtmlFiles/finalCheffPreprocessing1.html', context)
-
 # step 8
+# ------------------------------chef_preprocessing finla part    ------------------------------
 def final_chef_preprocessing2(request):
     url_ = "/categories/"
     link_text = "Categories"
     video_folder = "kitchen_video_sample" 
     output_json = "food_results.json" 
-
-    # Initialize models
     rf_person = Roboflow(api_key="lYHebHEC1o6mAZUSM8fM")
     model_person = rf_person.workspace("fyp1-r4zvo").project("kitchen1").version(1).model
-
     rf_uniform = Roboflow(api_key="lYHebHEC1o6mAZUSM8fM")
     model_uniform = rf_uniform.workspace("fyp1-r4zvo").project("kitchen-mgw9t").version(2).model
-    video_folder = os.path.join(settings.MEDIA_ROOT, 'videos', 'chef_videos')      # Path to the chef_videos folder inside media
-    # process_Chef_videos(video_folder, output_json,model_person,model_uniform)
+    video_folder = os.path.join(settings.MEDIA_ROOT, 'videos', 'chef_videos')  
+    process_Chef_videos(video_folder, output_json,model_person,model_uniform)
     with open("food_results.json", "r") as file:
         data = json.load(file)
-
-# Insert into the database
     for date_key, schedule in data.items():
         obj, created = DressCodeEntry.objects.update_or_create(
             date_key=date_key,
@@ -941,17 +784,13 @@ def final_chef_preprocessing2(request):
         )
         print(f"{'Created' if created else 'Updated'} DressCodeEntry for {date_key}")
     code_done=True
-    context = {
+    context = { 
             'url_': url_,
             'link_text': link_text,
             'is_uploaded': False
         }
     return render(request, 'HtmlFiles/finalCheffPreprocessing2.html',context )
-
-
-
 #   step 9 
-
 # ------------------------------Select Vidoes  (upload  people vidoes ) ------------------------------
 def select_video(request):
     is_uploaded = False
@@ -999,8 +838,6 @@ def select_video(request):
         'url_': url_,
         'link_text': link_text,
     })
-
-
 #  step 10
 #  ----------------------  Preprocesing    get frame of first vidoe and display it with grids --------------------
 def preprocessing(request):
@@ -1023,8 +860,6 @@ def preprocessing(request):
         return render(request, 'HtmlFiles/preprocessing.html', {'frame_rgb': None,"url_": url_, "link_text": link_text,})
     else:
         return render(request, 'HtmlFiles/preprocessing.html', {'frame_rgb': None,"url_": url_, "link_text": link_text,})
-
-
 #  step 11 
 # ---------------Save grids nuebrs ----------------------------------------------
 def preprocessing_1(request):
@@ -1056,8 +891,6 @@ def preprocessing_1(request):
             return render(request, 'HtmlFiles/preprocessing_1.html', {'error': 'Could not read grids', "url_": url_, "link_text": link_text})
 
     return render(request, 'HtmlFiles/preprocessing_1.html', {'error': 'Invalid request method', "url_": url_, "link_text": link_text})
-
-
 # step 12 
 #----------------------------------------------------------------Triger the main preprocesing view --------------------------------
 def start_preprocessing(request):
@@ -1066,10 +899,6 @@ def start_preprocessing(request):
         preprocessing_2(request) 
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
-
-
-
-
 # step 13
 #-----------------  Main Preprocesing fnctions --------------------------------
 def preprocessing_2(request):
@@ -1080,147 +909,125 @@ def preprocessing_2(request):
     os.environ["QT_SCALE_FACTOR"] = "1"
     os.environ["QT_SCREEN_SCALE_FACTORS"] = "1"
     raw_folder = r"D:\FYP - Copy\preprocessing\Video Preprocessing\New folder"
-    # video_dict, formatted_date = get_video_paths_by_time(raw_folder)
-    # if not video_dict:
-    #     return
-    # output_folder=process_all_videos_and_save_frames(list(video_dict.values()))    # call to convert video to frame 
-    # with open("output_path.txt", "r") as file: 
-    #     saved_path = file.read().strip()
-    # output_folder=process_images(saved_path)
-    # with open("output_path.txt", "r") as file:
-    #     saved_path = file.read().strip()
-    # grids_folder = os.path.join(os.getcwd(), 'media', 'videos')
-    # grids_file_path = os.path.join(grids_folder, 'grids.txt')      #get save grids 
-    # with open(grids_file_path, 'r') as file:
-    #     grids_data_str = file.read().strip()
-    # grids_data_str = grids_data_str.strip("'")
-    # grids_data = ast.literal_eval(grids_data_str)
-    # grid_numbers = [int(num) for num in grids_data]
-    # output_folder=create_cropped_grid_video(saved_path, grid_numbers=grid_numbers)   # use that grids to crop the video 
-    # with open("output_path.txt", "r") as file:
-    #     saved_path = file.read().strip()
+    video_dict, formatted_date = get_video_paths_by_time(raw_folder)
+    if not video_dict:
+        return
+    output_folder=process_all_videos_and_save_frames(list(video_dict.values()))    # call to convert video to frame 
+    with open("output_path.txt", "r") as file: 
+        saved_path = file.read().strip()
+    output_folder=process_images(saved_path)
+    with open("output_path.txt", "r") as file:
+        saved_path = file.read().strip()
+    grids_folder = os.path.join(os.getcwd(), 'media', 'videos')
+    grids_file_path = os.path.join(grids_folder, 'grids.txt')      #get save grids 
+    with open(grids_file_path, 'r') as file:
+        grids_data_str = file.read().strip()
+    grids_data_str = grids_data_str.strip("'")
+    grids_data = ast.literal_eval(grids_data_str)
+    grid_numbers = [int(num) for num in grids_data]
+    output_folder=create_cropped_grid_video(saved_path, grid_numbers=grid_numbers)   # use that grids to crop the video 
+    with open("output_path.txt", "r") as file:
+        saved_path = file.read().strip()
 
-    # output_folder=process_images(saved_path)      #enhance the frames 
-    # with open("output_path.txt", "r") as file:
-    #     saved_path = file.read().strip()
-    # input_folder = "20241126_enhancement1_cropped_enhancement1"
-    # preprocessed_folder = os.path.join(os.getcwd(), 'media', 'preprocessed')
-    # if os.path.exists(preprocessed_folder):
-    #     shutil.rmtree(preprocessed_folder)                  # Deletes the entire folder and its contents
-    # os.makedirs(preprocessed_folder, exist_ok=True)
-    # process_folder(input_folder, preprocessed_folder)
-
-
-    # ------------------Save the data in Tables ----------------------------------------------------
-#     json_file_path = os.path.abspath("20241126_enhancement1_cropped_enhancement1.json")
-#     image_folder = os.path.abspath("20241126_enhancement1_cropped_enhancement1_food")
-
-#     if os.path.exists(json_file_path):   #read the json file that made after applying model
-#         with open(json_file_path, "r") as json_file:
-#             data = json.load(json_file)
-
-#         match = re.search(r"(\d{8})", os.path.basename(json_file_path))
-#         if match:
-#             date_str = match.group(1)
-#             formatted_date = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}"    #store the date in a formate of date time 
-#         with open(date_file_path, "w") as date_file:
-#             date_file.write(formatted_date)
-#         if os.path.exists(date_file_path):
-#             with open(date_file_path, "r") as date_file:
-#                 saved_date = date_file.read().strip()
-
-#         image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-
-#         for key, value in data.items():
-#             table_number = int(key)
-#             time_before_meal_value = value.get("time_before_meal", 0.0)
-#             total_time = value.get("total_time", 0.0)
-#             total_people = value.get("total_people", 0.0)
-#                                                                  #Store customer waiting time for meal 
-#             order = CustomerOrderWaitingTime.objects.create(
-#                 table_number=table_number,
-#                 total_time=total_time,
-#                 total_people=total_people,
-#                 time_before_meal=time_before_meal_value,
-#                 date=saved_date
-#             )
-
-#             if image_files:
-#                 random_image = random.choice(image_files)
-#                 image_path = os.path.join(image_folder, random_image)
-#                 with open(image_path, "rb") as img_file:
-#                     order.visual_representation.save(random_image, File(img_file))  #for feature selection of image storage 
-#             order.save()
-#         total_people = 0
-#         people_per_hour = {}
-#         meals = {}
-#     for table_id, details in data.items():
-#         table_number = int(table_id)
-#         total_people += details.get("total_people", 0)
-
-#         for hour, count in details.get("total_people_per_hour", {}).items():
-#             people_per_hour[hour] = people_per_hour.get(hour, 0) + count   #get all the people per hours for entire day 
-
-#         for meal, count in details.get("meal", {}).items():
-#             meals[meal] = meals.get(meal, 0) + count    #get all the meal   for entire day 
+    output_folder=process_images(saved_path)      #enhance the frames 
+    with open("output_path.txt", "r") as file:
+        saved_path = file.read().strip()
+    input_folder = "20241126_enhancement1_cropped_enhancement1"
+    preprocessed_folder = os.path.join(os.getcwd(), 'media', 'preprocessed')
+    if os.path.exists(preprocessed_folder):
+        shutil.rmtree(preprocessed_folder)                  # Deletes the entire folder and its contents
+    os.makedirs(preprocessed_folder, exist_ok=True)
+    process_folder(input_folder, preprocessed_folder)
 
 
-#     image_path = None
-#     if os.path.exists(image_folder):
-#         image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-#         selected_image = next((img for img in image_files if f"best_food_output_{date_str}.jpg" in img), None) #for feature selection of image storage 
-#         if not selected_image and image_files:
-#             selected_image = random.choice(image_files)
-#         if selected_image:
-#             image_path = os.path.join(image_folder, selected_image)
-#  #Store General Analytics
-#     order_summary = CustomerOrderSummary.objects.create(
-#         table_number=table_number,
-#         total_people=total_people,   #total people in entire day
-#         people_per_hour=people_per_hour,   #total people according to hour in entire day
-#         meals=meals,   #total meal  in entire day
-#         date=formatted_date
-#     )
+    #------------------Save the data in Tables ----------------------------------------------------
+    json_file_path = os.path.abspath("20241126_enhancement1_cropped_enhancement1.json")
+    image_folder = os.path.abspath("20241126_enhancement1_cropped_enhancement1_food")
 
-#     if image_path:
-#         with open(image_path, "rb") as img_file:
-#             order_summary.meal_image.save(random_image, File(img_file))
+    if os.path.exists(json_file_path):   #read the json file that made after applying model
+        with open(json_file_path, "r") as json_file:
+            data = json.load(json_file)
+
+        match = re.search(r"(\d{8})", os.path.basename(json_file_path))
+        if match:
+            date_str = match.group(1)
+            formatted_date = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}"    #store the date in a formate of date time 
+        with open(date_file_path, "w") as date_file:
+            date_file.write(formatted_date)
+        if os.path.exists(date_file_path):
+            with open(date_file_path, "r") as date_file:
+                saved_date = date_file.read().strip()
+
+        image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+
+        for key, value in data.items():
+            table_number = int(key)
+            time_before_meal_value = value.get("time_before_meal", 0.0)
+            total_time = value.get("total_time", 0.0)
+            total_people = value.get("total_people", 0.0)
+                                                                 #Store customer waiting time for meal 
+            order = CustomerOrderWaitingTime.objects.create(
+                table_number=table_number,
+                total_time=total_time,
+                total_people=total_people,
+                time_before_meal=time_before_meal_value,
+                date=saved_date
+            )
+
+            if image_files:
+                random_image = random.choice(image_files)
+                image_path = os.path.join(image_folder, random_image)
+                with open(image_path, "rb") as img_file:
+                    order.visual_representation.save(random_image, File(img_file))  #for feature selection of image storage 
+            order.save()
+        total_people = 0
+        people_per_hour = {}
+        meals = {}
+    for table_id, details in data.items():
+        table_number = int(table_id)
+        total_people += details.get("total_people", 0)
+
+        for hour, count in details.get("total_people_per_hour", {}).items():
+            people_per_hour[hour] = people_per_hour.get(hour, 0) + count   #get all the people per hours for entire day 
+
+        for meal, count in details.get("meal", {}).items():
+            meals[meal] = meals.get(meal, 0) + count    #get all the meal   for entire day 
 
 
+    image_path = None
+    if os.path.exists(image_folder):
+        image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        selected_image = next((img for img in image_files if f"best_food_output_{date_str}.jpg" in img), None) #for feature selection of image storage 
+        if not selected_image and image_files:
+            selected_image = random.choice(image_files)
+        if selected_image:
+            image_path = os.path.join(image_folder, selected_image)
+ #Store General Analytics
+    order_summary = CustomerOrderSummary.objects.create(
+        table_number=table_number,
+        total_people=total_people,   #total people in entire day
+        people_per_hour=people_per_hour,   #total people according to hour in entire day
+        meals=meals,   #total meal  in entire day
+        date=formatted_date
+    )
 
-
-
-
-
-
+    if image_path:
+        with open(image_path, "rb") as img_file:
+            order_summary.meal_image.save(random_image, File(img_file))
     json_filename = "table_cleanness_check.json"
 
     with open(json_filename, "r") as f:
         try:
             file_data = json.load(f)
-            print("Loaded data:", file_data)  # Debugging: Check the loaded data
         except json.JSONDecodeError as e:
             print(f"Error loading JSON: {e}")
             file_data = {}
-
-    # Process and save the data
     for date_str, hour_data in file_data.items():
-        print(f"Processing date: {date_str}, hour_data: {hour_data}")  # Debugging
-        
-        # Convert string date to datetime object
         date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
-
-        # Create or update the database entry
         obj, created = TableCleanliness.objects.get_or_create(date=date_obj)
-        print(f"Created: {created}, obj: {obj}")  # Debugging to check if the object is created/updated
-
-        # Update the data field with the hour_data
+        print(f"Created: {created}, obj: {obj}")  
         obj.data.update(hour_data)
-        obj.save()  # Save to the database
-
-
-
-        
+        obj.save() 
     context = {
         'title': 'Preprocessing Completed - Congratulations!',
         'preprocessing': True,
@@ -1228,63 +1035,51 @@ def preprocessing_2(request):
         'link_text': link_text,
     }
     return render(request, 'HtmlFiles/preprocessing_2.html', context)
-
 # step 14
-
 #------------  Function to show General  Informations --------------------------------
 def analytics(request):
     url_ = "/categories/"
     link_text = "Categories"
     summaries = CustomerOrderSummary.objects.all()
-    
-    # Get all available dates for the filter dropdown
     available_dates = set()
     for summary in summaries:
         available_dates.add(summary.date.strftime("%Y-%m-%d"))
     available_dates = sorted(available_dates)
-    
-    # Check for date selection from request
     selected_date = request.GET.get("date")
-    
-    # If a date is selected, filter summaries by that date
     filtered_summaries = summaries
     if selected_date:
         filtered_summaries = [s for s in summaries if s.date.strftime("%Y-%m-%d") == selected_date]
 
     grouped_data = {}
-    max_people_per_day = defaultdict(int)  # Track total people per day
+    max_people_per_day = defaultdict(int) 
     combined_people_per_hour = defaultdict(lambda: defaultdict(int))  # Track people per hour per date
-    peak_hours_per_day = {}  # Store peak hours per date
-    all_meals = defaultdict(int)  # Aggregate all meals for bar chart
-
-    # Data for charts
+    peak_hours_per_day = {}
+    all_meals = defaultdict(int)  # 
     chart_data = {
-        "bar_chart": {"labels": [], "data": []},  # Popular dishes
-        "pie_chart": {"labels": [], "data": []},  # Peak hours distribution
-        "line_chart": {"labels": [], "datasets": []}  # Customer trends
+        "bar_chart": {"labels": [], "data": []}, 
+        "pie_chart": {"labels": [], "data": []}, 
+        "line_chart": {"labels": [], "datasets": []}  
     }
 
     for summary in filtered_summaries:
         date = summary.date.strftime("%Y-%m-%d")
 
-        max_people_per_day[date] += summary.total_people  # Sum total people per day
+        max_people_per_day[date] += summary.total_people
 
         for hour, count in summary.people_per_hour.items():
-            combined_people_per_hour[date][hour] += count  # Aggregate people per hour
+            combined_people_per_hour[date][hour] += count  
 
         if date not in grouped_data:
             grouped_data[date] = {
                 "table_number": summary.table_number,
                 "meals": {},
-                "meal_image": summary.meal_image  # Use first available image per date
+                "meal_image": summary.meal_image  
             }
 
         for dish, count in summary.meals.items():
-            grouped_data[date]["meals"][dish] = grouped_data[date]["meals"].get(dish, 0) + count  # Combine meal counts
-            all_meals[dish] += count  # Aggregate all meals for the bar chart
-
-    # Process data for bar chart (popular dishes)
-    sorted_meals = sorted(all_meals.items(), key=lambda x: x[1], reverse=True)[:10]  # Top 10 dishes
+            grouped_data[date]["meals"][dish] = grouped_data[date]["meals"].get(dish, 0) + count 
+            all_meals[dish] += count  
+    sorted_meals = sorted(all_meals.items(), key=lambda x: x[1], reverse=True)[:10] 
     chart_data["bar_chart"]["labels"] = [meal[0] for meal in sorted_meals]
     chart_data["bar_chart"]["data"] = [meal[1] for meal in sorted_meals]
 
@@ -1297,7 +1092,6 @@ def analytics(request):
                 for hour, count in hour_data.items():
                     peak_hours_data[hour] = count
     else:
-        # Otherwise, aggregate peak hours across all dates
         peak_hours_data = {}
         for date, hour_data in combined_people_per_hour.items():
             for hour, count in hour_data.items():
@@ -1379,16 +1173,12 @@ def analytics_tables(request):
         "peak_hours_per_day": peak_hours_per_day
     }
     return render(request, 'HtmlFiles/analytics_tables.html', context)
-
-
 # step 15 
-
 #----function to show how many time a customer wait for food --------------------------------
 def customer_waiting_time_for_order(request):
     url_ = "/categories/"
     link_text = "Categories"
     waiting_times = CustomerOrderWaitingTime.objects.all()
-
     cleanliness_data = TableCleanliness.objects.all()
     table_data = []
     time_slots = [
@@ -1396,14 +1186,12 @@ def customer_waiting_time_for_order(request):
         "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM",
         "8PM", "9PM", "10PM", "11PM"
     ]
-
     for obj in cleanliness_data:
         row = {
             "date": obj.date.strftime('%Y-%m-%d'),
             "data": [obj.data.get(slot, "No data") for slot in time_slots]
         }
         table_data.append(row)
-
     context = {
         'url_': url_,
         'link_text': link_text,
@@ -1413,7 +1201,6 @@ def customer_waiting_time_for_order(request):
         'active_page': 'statistics',
     }
     return render(request, 'HtmlFiles/customer_waiting_time_for_order.html', context)
-
 def customer_waiting_time_for_order_Visualization(request):
     url_ = "/categories/"  
     link_text = "Categories"
@@ -1440,11 +1227,8 @@ def customer_waiting_time_for_order_Visualization(request):
         "active_page": "Visualization",
     }
     return render(request, "HtmlFiles/customer_waiting_time_for_order_Visualization.html", context) 
-
 # step 16
-
 #----function to show the dress code check --------------------------------
-
 def Cheff_dress_code(request):
     url_ = "/categories/"  
     link_text = "Categories"
@@ -1472,27 +1256,18 @@ def Cheff_dress_code(request):
          "active_page": "statistics",
     }
     return render(request, 'HtmlFiles/Cheff_dress_code.html', context)
-
 def Cheff_dress_code_Visualization(request):
     url_ = "/categories/"  
     link_text = "Categories"
     error_message = None
     chart_data_json = '{}'
-    
     try:
-        # Get all dress code entries
         dress_code_entries = DressCodeEntry.objects.all()
         available_dates = set()
-
-        # Get all available dates for filtering
         for entry in dress_code_entries:
             if entry.date_key:
                 available_dates.add(entry.date_key)
-    
-        # Get selected date from request
         selected_date = request.GET.get("date")
-        
-        # Initialize violation ranges with proper thresholds
         violation_ranges = {
             'No Violations': 0,
             '1-2 Violations': 0,
@@ -1502,7 +1277,6 @@ def Cheff_dress_code_Visualization(request):
             'More than 10 Violations': 0
         }
 
-        # Process data for selected date or all dates
         if selected_date:
             entries_to_process = DressCodeEntry.objects.filter(date_key=selected_date)
             if not entries_to_process.exists():
@@ -1512,19 +1286,12 @@ def Cheff_dress_code_Visualization(request):
 
         if not error_message and not dress_code_entries.exists():
             error_message = "No dress code data available in the system. Please add dress code data first."
-
-        # Initialize time data structure
         time_data = []
-        
-        # Process each entry if no errors occurred
         if not error_message:
-            # First pass: collect all time slots and initialize counts
             time_slot_data = {}
-            
             for entry in entries_to_process:
                 if entry.data and isinstance(entry.data, dict):
                     for time_slot, violations in entry.data.items():
-                        # Calculate violation count
                         if isinstance(violations, list):
                             violation_count = len(violations)
                         else:
@@ -1532,8 +1299,6 @@ def Cheff_dress_code_Visualization(request):
                                 violation_count = int(violations)
                             except (TypeError, ValueError):
                                 violation_count = 0
-                        
-                        # Update or initialize time slot data
                         if time_slot not in time_slot_data:
                             time_slot_data[time_slot] = {'violations': violation_count}
                         else:
@@ -1541,18 +1306,12 @@ def Cheff_dress_code_Visualization(request):
                                 time_slot_data[time_slot]['violations'],
                                 violation_count
                             )
-
-            # Second pass: create time_data and update violation ranges
             for time_slot, data in sorted(time_slot_data.items(), key=lambda x: convert_to_24hr(x[0])):
                 violation_count = data['violations']
-                
-                # Add to time data
                 time_data.append({
                     'time_slot': time_slot,
                     'violations': violation_count
                 })
-                
-                # Update violation ranges based on threshold
                 if violation_count == 0:
                     violation_ranges['No Violations'] += 1
                 elif violation_count <= 2:
@@ -1565,15 +1324,11 @@ def Cheff_dress_code_Visualization(request):
                     violation_ranges['9-10 Violations'] += 1
                 else:
                     violation_ranges['More than 10 Violations'] += 1
-
-            # Prepare chart data
             chart_data = {
                 'date_key': selected_date if selected_date else "All Dates",
                 'time_data': time_data,
                 'violation_ranges': violation_ranges
             }
-
-            # Convert to JSON for template
             chart_data_json = json.dumps(chart_data)
 
     except Exception as e:
@@ -1593,5 +1348,4 @@ def Cheff_dress_code_Visualization(request):
     
     return render(request, 'HtmlFiles/Cheff_dress_code_visualization.html', context)
 
-
-
+# ------------------------------------FInially Done with FYP------------------------------------------

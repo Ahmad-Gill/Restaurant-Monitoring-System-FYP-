@@ -7,13 +7,13 @@ from django.conf.urls.static import static
 urlpatterns = [
     # Loading page first, then main
     path('', loading_view, name='loading'),
-    path('home/', views.main, name='main'),  # Changed from '' to 'home/'
+    path('home/', views.main, name='main'),
 
     # Analytics
     path('analytics/', views.analytics, name='analytics'),
     path('analytics_table/', views.analytics_tables, name='analytics_table'),
 
-    # Categories
+    # Categories nad preprocesing
     path('categories/', views.categories, name='categories'),
     path('cheff-and-people/', views.cheff_and_people, name='cheff_and_people'),
     path('final_chef_preprocessing/', views.final_chef_preprocessing1, name='final_chef_preprocessing1'),
@@ -39,11 +39,10 @@ urlpatterns = [
     path('preprocessing/', views.preprocessing, name='preprocessing'),
     path('preprocessing_1', views.preprocessing_1, name='preprocessing_1'), 
 
-
+    # Dress Code 
      path('Cheff_dress_code/', views.Cheff_dress_code, name='Cheff_dress_code'),
      path('Cheff_dress_code_Visualization/', views.Cheff_dress_code_Visualization, name='Cheff_dress_code_Visualization'),
 ]
 
-# Serve media files in DEBUG mode
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

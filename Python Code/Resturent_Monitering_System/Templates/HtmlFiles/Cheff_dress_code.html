@@ -38,14 +38,11 @@
 </style>
 <div class="containerr">
     <h2>Chef's Dress Code by Time</h2>
-
-    <!-- Table for displaying dress code data -->
     <div class="table-scroll">
         <table class="waiting-time-table">
             <thead>
                 <tr>
                     <th class="date-column">Date</th>
-                    <!-- Dynamically create table headers for each time slot -->
                     {% for time_slot in time_slots %}
                         <th class="date-column">{{ time_slot }}</th>
                     {% endfor %}
@@ -55,7 +52,6 @@
                 {% for entry in dress_code_data %}
                     <tr>
                         <td class="date-column">{{ entry.date_key }}</td>
-                        <!-- For each time slot, print the violations dynamically -->
                         {% for time_slot in time_slots %}
                             <td class="date-column">
                                 {% with violation_data=None %}
@@ -64,13 +60,13 @@
                                             {% with violation_data=data.violations %}
                                                 {% for violation in violation_data %}
                                                     {% if violation == "no_apron" %}
-                                                        ❌ No Apron<br>
+                                                    Apron ❌<br>
                                                     {% elif violation == "no_cap" %}
-                                                        ❌ No Cap<br>
+                                                    Cap❌ <br>
                                                     {% elif violation == "apron" %}
-                                                        ✅ Apron<br>
+                                                    Apron  ✅ <br>
                                                     {% elif violation == "cap" %}
-                                                        ✅ Cap<br>
+                                                    Cap ✅ <br>
                                                     {% endif %}
                                                 {% endfor %}
                                             {% endwith %}

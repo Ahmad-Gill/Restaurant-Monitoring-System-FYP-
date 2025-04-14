@@ -61,6 +61,7 @@ function checkThresholdAndUpdateCharts(newData) {
             
             // Count violations for each range
             newData.time_data.forEach(item => {
+              console.log("item data is shown -------------------------",item)
                 const count = item.violations;
                 if (count === 0) {
                     violationRanges['No Violations']++;

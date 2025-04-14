@@ -44,11 +44,6 @@
                                {% if user.username == 'Ahmad' %}admin-enabled{% else %}admin-disabled disabled{% endif %}"
                                href="{% url 'admin:index' %}">Admin</a>
                         </li>
-                        {% comment %} <li class="nav-item">
-                            <a class="nav-link 
-                               {% if user.username == 'Ahmad' %}admin-enabled{% else %}admin-enabled{% endif %}"
-                               href="{% url 'select_video' %}">Upload</a>
-                        </li> {% endcomment %}
                         
                         
                         <li class="nav-item">
@@ -65,15 +60,6 @@
         <div class="logo">
             <img src="{% static 'images/bg_logo.png' %}" alt="logo" id="rotatingLogo">
         </div>
-        {% comment %} {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible fade show my-0 " role="alert">
-            <strong>{{ message }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-        {% endif %} {% endcomment %}
-        <!-- Content from child templates -->
         <div class="content">
             {% block body %}
             {% endblock %}

@@ -32,8 +32,8 @@
             .waiting-time-table_ th,
             .waiting-time-table_ td {
                 border: none; /* Remove borders */
-                border-top: 2px solid #000; /* Horizontal top border */
-                border-bottom: 1px solid #ccc; /* Horizontal bottom border */
+                border-top: 0px solid #000; /* Horizontal top border */
+                border-bottom: 0px solid #ccc; /* Horizontal bottom border */
                 padding: 8px;
                 text-align: center;
             }
@@ -46,15 +46,15 @@
         
             /* Optional: Styling for cells with cleanliness status */
             .clean-cell {
-                background-color: #7ed87e; /* Darker green */
+                background-color: #000000; /* Darker green */
             }
         
             .dirty-cell {
-                background-color: #f30808; /* Light red */
+                background-color: #000000; /* Light red */
             }
         
             .no-data-cell {
-                background-color: #7ed87e; /* Darker green */
+                background-color: #000000; /* Darker green */
             }
         </style>
         
@@ -74,9 +74,16 @@
                     <tr>
                         <td class="date-column">{{ entry.date }}</td>
                         {% for status in entry.data %}
-                            <td class="{% if status == 'Clean!!' %}clean-cell{% elif status == 'Dirty!!' %}dirty-cell{% else %}no-data-cell{% endif %}">
-                                <!-- No text, just color for cleanliness status -->
-                            </td>
+                        <td class="{% if status == 'Clean!!' %}clean-cell{% elif status == 'Dirty!!' %}dirty-cell{% else %}no-data-cell{% endif %}">
+                            {% if status == 'Clean!!' %}
+                            <span style="color: gray;">–</span>
+                            {% elif status == 'Dirty!!' %}
+                                <span style="color: red;"> ❌</span>
+                            {% else %}
+                                <span style="color: gray;">–</span>
+                            {% endif %}
+                        </td>
+                        
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -84,8 +91,6 @@
         </table>
     </div>
 </div>
-
-<!-- Customer Waiting Time Data Table -->
 <div class="containerr">
     <h2>Customer Waiting Time for Order</h2>
     <div class="waiting-time-table-wrapper">

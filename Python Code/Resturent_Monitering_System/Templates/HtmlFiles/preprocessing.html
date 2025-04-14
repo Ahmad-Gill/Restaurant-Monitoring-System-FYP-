@@ -15,61 +15,44 @@
         Ensure all necessary grids are selected, then click <strong>"Submit Grids"</strong> to proceed.
     </p>
     
-
-    <!-- Buttons Container -->
     <div class="flex-row">
-        <!-- Get Frame Button -->
         <form method="POST" enctype="multipart/form-data" action="{% url 'preprocessing' %}">
             {% csrf_token %}
             <button type="submit" class="submit-btn" id="startBtn">Get Frame</button>
         </form>
-
-        <!-- Submit Grids Button -->
         <div id="submitSection">
             <button id="submitGridsBtn">Submit Grids</button>
         </div>
     </div>
-
-    <!-- Display Frame -->
     {% if frame_rgb %}
     <h2>Extracted Frame with Grids:</h2>
-
-    <!-- Display Frame with Grid Overlay -->
     <div id="imageContainer" style="position: relative; display: inline-block;">
         <img src="data:image/png;base64,{{ frame_rgb }}" alt="Frame with grid" style="max-width: 100%; height: auto;" />
-        <!-- Overlay Div for Grid Selection -->
         <div id="gridOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
     </div>
     <br><br>
-    <!-- Grid Input Section -->
     <div id="gridInputSection">
-        <!-- Already included above for Submit Grids -->
     </div>
     {% else %}
     <p>No frame available to display.</p>
     {% endif %}
 </div>
 
-
-<!-- Lottie Animation for loading (optional) -->
 <div id="overlay" class="overlay">
     <div id="lottie-animation" data-animation-path="{% static 'Animation/Animation1.json' %}" style="width: 50vw; height: auto; margin: 0 auto;"></div>
 </div>
 
 <!-- Include Lottie JS from CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.4/lottie.min.js"></script>
-{% comment %} <script src="{% static 'JavaScriptFiles/preprocessing.js' %}"></script> {% endcomment %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const gridOverlay = document.getElementById("gridOverlay");
-        const gridNumbers = []; // Array to hold the selected grid numbers
+        const gridNumbers = []; 
         const gridList = document.getElementById("gridList");
         const submitGridsBtn = document.getElementById("submitGridsBtn");
-        const overlay = document.getElementById("overlay"); // Loading overlay
+        const overlay = document.getElementById("overlay");
         const rows = 20;
         const cols = 20;
-    
-        // Generate 20x20 grids
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 const gridCell = document.createElement("div");
@@ -83,32 +66,28 @@
                 gridCell.setAttribute("data-grid", `${row * cols + col + 1}`);
                 gridCell.style.cursor = "pointer";
                 gridCell.style.pointerEvents = "auto";
-    
-                // Hover Effect
                 gridCell.addEventListener("mouseenter", () => {
                     if (gridNumbers.includes(gridCell.getAttribute("data-grid"))) {
-                        gridCell.style.backgroundColor = "rgba(255, 0, 0, 0.5)"; // Red if already selected
+                        gridCell.style.backgroundColor = "rgba(255, 0, 0, 0.5)"; 
                     } else {
-                        gridCell.style.backgroundColor = "rgba(255, 255, 0, 0.5)"; // Yellow on hover
+                        gridCell.style.backgroundColor = "rgba(255, 255, 0, 0.5)"; 
                     }
                 });
                 gridCell.addEventListener("mouseleave", () => {
                     if (gridNumbers.includes(gridCell.getAttribute("data-grid"))) {
-                        gridCell.style.backgroundColor = "rgba(0, 255, 0, 0.5)"; // Green if selected
+                        gridCell.style.backgroundColor = "rgba(0, 255, 0, 0.5)"; 
                     } else {
-                        gridCell.style.backgroundColor = "transparent"; // Transparent if not selected
+                        gridCell.style.backgroundColor = "transparent"; 
                     }
                 });
-    
-                // Click to Select/Unselect
                 gridCell.addEventListener("click", () => {
                     const gridNumber = gridCell.getAttribute("data-grid");
                     if (!gridNumbers.includes(gridNumber)) {
                         gridNumbers.push(gridNumber);
-                        gridCell.style.backgroundColor = "rgba(0, 255, 0, 0.5)"; // Green for selected
+                        gridCell.style.backgroundColor = "rgba(0, 255, 0, 0.5)";
                     } else {
                         gridNumbers.splice(gridNumbers.indexOf(gridNumber), 1);
-                        gridCell.style.backgroundColor = "transparent"; // Unselected
+                        gridCell.style.backgroundColor = "transparent"; 
                     }
                     displayGrids();
                 });
@@ -116,10 +95,8 @@
                 gridOverlay.appendChild(gridCell);
             }
         }
-    
-        // Display selected grids
         function displayGrids() {
-            gridList.innerHTML = ''; // Clear the list
+            gridList.innerHTML = '';
             gridNumbers.forEach((grid, index) => {
                 const listItem = document.createElement("li");
                 listItem.textContent = `Grid ${grid}`;
@@ -128,7 +105,6 @@
             });
         }
     
-        // Submit grids via AJAX
         submitGridsBtn.addEventListener("click", function () {
             if (gridNumbers.length === 0) {
                 alert("No grids to submit. Please select grids before submitting.");
@@ -137,26 +113,19 @@
     
             sendGridsToServer(gridNumbers);
         });
-    
-        // Send grids to the server
         function sendGridsToServer(grids) {
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    
-            // Show loading overlay
             overlay.style.display = 'block';
-    
             const xhr = new XMLHttpRequest();
             xhr.open("POST", "/preprocessing_1", true);
             xhr.setRequestHeader("X-CSRFToken", csrfToken);
             xhr.setRequestHeader("Content-Type", "application/json");
-    
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
-                    overlay.style.display = 'none'; // Hide overlay
+                    overlay.style.display = 'none';
                     if (xhr.status === 200) {
-                        alert("Grids submitted successfully!");
                         window.location.href = '/preprocessing_1';
-                        gridNumbers.length = 0; // Clear selected grids
+                        gridNumbers.length = 0; 
                         displayGrids();
                     } else {
                         alert("Error submitting grids.");
@@ -164,7 +133,7 @@
                 }
             };
     
-            xhr.send(JSON.stringify({ grids })); // Send grid data
+            xhr.send(JSON.stringify({ grids })); 
         }
     });
     

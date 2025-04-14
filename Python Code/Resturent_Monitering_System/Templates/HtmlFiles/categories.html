@@ -22,24 +22,14 @@
                             <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
                         </a>
                     {% else %}
-                        <span>No link available</span>  <!-- Fallback if URL is None -->
+                        <span>No link available</span> 
                     {% endif %}
                     <div class="hidden-text">
                         <h3><strong>{{ category.name }}</strong></h3>
-                        {% comment %} <p>This is some additional text for {{ category.some_text }}.</p> {% endcomment %}
                     </div>
                 </div>
             {% endfor %}
         </div>
-        
-        
-
-        
-        
-        
-        
-        
-        
 
         {% else %}
             <p>No categories available.</p>

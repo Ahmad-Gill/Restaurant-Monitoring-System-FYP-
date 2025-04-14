@@ -11,12 +11,8 @@
 <div class="container_">
     <h1 class="page-title">Select Kitchen Videos</h1>
     <p class="page-subtitle">Upload the entire day’s video for further processing.</p>
-
-    <!-- Form for uploading videos -->
     <form method="POST" enctype="multipart/form-data" id="video-upload-form" class="video-upload-form">
         {% csrf_token %}
-        
-        <!-- Custom file input button -->
         <label for="videoInput" class="custom-file-input">
             <span class="file-input-text">Choose Videos</span>
         </label>
@@ -30,8 +26,6 @@
             hidden 
             onchange="showVideoPreview(event)"
         >
-
-        <!-- Hidden submit button -->
         <button type="submit" class="submit-btn" style="display: none;">Upload Videos</button>
     </form>
     {% if is_uploaded %}
@@ -42,19 +36,13 @@
                 <li class="video-item">{{ url }}</li>
             {% endfor %}
         </ul>
-
-        <!-- Next button -->
         <a href="{% url 'final_chef_preprocessing1' %}" class="next-btn-container">
             <button id="next-btn" class="next-btn">Click Next to Continue</button>
         </a>
     </div>
     {% endif %}
-
-    <!-- Upload Status Message -->
     <div id="upload-status" class="upload-status-message"></div>
 </div>
-
-<!-- Full-Screen Overlay with Lottie Animation -->
 <div id="overlay" class="overlay">
     <div id="lottie-animation" 
          data-animation-path="{% static 'Animation/Animation1.json' %}" 
